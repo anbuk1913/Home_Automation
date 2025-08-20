@@ -1,13 +1,13 @@
 const express = require('express')
 const app = express()
 const path = require('path')
-const env = require('dotenv')
+const env = require('dotenv').config()
 const morgan = require('morgan')
 const session = require('express-session')
+const MongoStore = require("connect-mongo")
 const userRouter = require('./routes/userRouter')
 const adminRouter = require('./routes/adminRouter')
 
-env.config()
 require('./config/mongoDB')
 
 app.use(express.json())

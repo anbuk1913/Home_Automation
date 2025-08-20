@@ -5,29 +5,29 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon server.js"
+    "start": "node server.js",
+    "dev": "nodemon server.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "body-parser": "^2.2.0",
+    "connect-mongo": "^5.1.0",
     "dotenv": "^17.2.1",
     "ejs": "^3.1.10",
     "express": "^5.1.0",
     "express-session": "^1.18.2",
     "mongodb": "^6.18.0",
     "mongoose": "^8.17.1",
-<<<<<<< HEAD
     "morgan": "^1.10.1",
-    "nodemon": "^3.1.10",
-    "path": "^0.12.7"
-  }
-=======
-    "nodemon": "^3.1.10",
+    "passport": "^0.7.0",
+    "passport-google-oauth20": "^2.0.0",
     "path": "^0.12.7"
   },
-  "devDependencies": {}
->>>>>>> d0e8aa8 (Initial commit)
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
 }

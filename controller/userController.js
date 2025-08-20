@@ -1,39 +1,43 @@
-const data = require('../model/pinModel')
+const bcrypt = require('bcrypt')
+const dataCollection = require('../model/pinModel')
+const userCollection = require('../model/userModel')
 
-const homePage = async (req,res,next)=>{
+async function encryptPassword(password) {
+  const saltRounds = 10
+  const hashedPassword = await bcrypt.hash(password, saltRounds)
+  return hashedPassword
+}
+
+async function comparePassword(enteredPassword, storedPassword) {
+  const isMatch = await bcrypt.compare(enteredPassword, storedPassword)
+  return isMatch
+}
+
+const loginPage = async(req,res,next)=>{
     try {
-        const readings = await data.find({}).sort({ createdAt: 1 }).lean();
-        const latest = readings[readings.length - 1] || { temperature: 0, humidity: 0 };
-<<<<<<< HEAD
-        return res.render('user/home',{
-=======
-        return res.render('home',{
->>>>>>> d0e8aa8 (Initial commit)
-            temperature: latest.temperature??0,
-            humidity: latest.humidity??0,
-            historicaldata: readings.map(r => ({
-                time: new Date(r.createdAt).toLocaleTimeString(),
-                temperatureC: r.temperature,
-                humidity: r.humidity
-            }))
-        })
+        if(req.session.login){
+            return res.redirect("/")
+        } else {
+            return res.render("user/login")
+        }
     } catch (error) {
         console.log(error)
     }
 }
 
-const receivedData = async(req,res,next)=>{
+const loginPost = async(req,res,next)=>{
     try {
-        console.log('Data received:', req.body)
-        const datas = new data({
-            temperature: req.body.temperature,
-            humidity: req.body.humidity
-        })
-        datas.save()
-        return res.status(200).send('Data received')
+        const userData = await userCollection.findOne({ email: req.body.email})
+        if(userData && userData.password && (await comparePassword(req.body.password, userData.password))){
+            req.session.login = true
+            req.session.userId = userData._id
+            return res.status(200).send({ success: true })
+        } else {
+            return res.status(208).send({ success: false })
+        }
     } catch (error) {
         console.log(error)
     }
 }
 
-module.exports = { homePage, receivedData }
+module.exports = { loginPage, loginPost }

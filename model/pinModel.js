@@ -19,13 +19,4 @@ const dataSchema = new mongoose.Schema(
 
 dataSchema.index({ createdAt: 1 })
 const Data = mongoose.model('data', dataSchema)
-
-<<<<<<< HEAD
-<<<<<<< HEAD
 module.exports = Data
-=======
-module.exports = Data
->>>>>>> d0e8aa8 (Initial commit)
-=======
-module.exports = Data
->>>>>>> 8a3eef7 (New)
