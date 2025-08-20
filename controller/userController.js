@@ -4,7 +4,11 @@ const homePage = async (req,res,next)=>{
     try {
         const readings = await data.find({}).sort({ createdAt: 1 }).lean();
         const latest = readings[readings.length - 1] || { temperature: 0, humidity: 0 };
+<<<<<<< HEAD
+        return res.render('user/home',{
+=======
         return res.render('home',{
+>>>>>>> d0e8aa8 (Initial commit)
             temperature: latest.temperature??0,
             humidity: latest.humidity??0,
             historicaldata: readings.map(r => ({

@@ -19,8 +19,15 @@
     "express-session": "^1.18.2",
     "mongodb": "^6.18.0",
     "mongoose": "^8.17.1",
+<<<<<<< HEAD
+    "morgan": "^1.10.1",
+    "nodemon": "^3.1.10",
+    "path": "^0.12.7"
+  }
+=======
     "nodemon": "^3.1.10",
     "path": "^0.12.7"
   },
   "devDependencies": {}
+>>>>>>> d0e8aa8 (Initial commit)
 }

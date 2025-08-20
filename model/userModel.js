@@ -29,4 +29,12 @@ const userSchema = new mongoose.Schema(
   }
 )
 const users = mongoose.model('users', userSchema)
+<<<<<<< HEAD
+<<<<<<< HEAD
 module.exports = users
+=======
+module.exports = users
+>>>>>>> d0e8aa8 (Initial commit)
+=======
+module.exports = users
+>>>>>>> 8a3eef7 (New)

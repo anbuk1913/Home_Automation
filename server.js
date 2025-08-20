@@ -2,8 +2,10 @@ const express = require('express')
 const app = express()
 const path = require('path')
 const env = require('dotenv')
+const morgan = require('morgan')
 const session = require('express-session')
 const userRouter = require('./routes/userRouter')
+const adminRouter = require('./routes/adminRouter')
 
 env.config()
 require('./config/mongoDB')
@@ -17,17 +19,24 @@ app.use((req, res, next) => {
   next()
 })
 
+app.use(morgan('dev'))
+
 app.use(
   session({
     secret: process.env.SECRETKEY,
     resave: false,
     saveUninitialized: true,
+    store: MongoStore.create({
+        mongoUrl: process.env.MONGOURL + "ImbedSoftware",
+        ttl: 4 * 24 * 60 * 60, 
+    }),
+    cookie: { secure: false }
   })
 )
 
 app.use(userRouter)
-
+app.use(adminRouter)
 
 app.listen(process.env.PORT,() => {
     console.log("Server created")
-}) 
+})
