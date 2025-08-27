@@ -1241,7 +1241,7 @@
                                     <i class="fas fa-check"></i>
                                     Approve
                                 </button>
-                                <button class="btn btn-danger btn-sm" onclick="showModal('Are you sure you want to reject this request?','HEllo')">
+                                <button class="btn btn-danger btn-sm">
                                     <i class="fas fa-times"></i>
                                     Reject
                                 </button>
@@ -1542,16 +1542,6 @@
                 currentResolve(response);
                 currentResolve = null;
             }
-            
-            // Show result
-            const resultDiv = document.getElementById('result');
-            resultDiv.textContent = `User selected: ${response}`;
-            resultDiv.style.display = 'block';
-            resultDiv.classList.add('show');
-            
-            setTimeout(() => {
-                resultDiv.classList.remove('show');
-            }, 100);
         }
 
         // Close modal on overlay click
