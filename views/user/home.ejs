@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Imbed Software</title>
+  <link rel="icon" href="/images/logo.png">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-green: #8cbf3a;
+      --secondary-dark: #1a1d23;
+      --tertiary-dark: #2a2d35;
+      --text-light: #e5e7eb;
+      --text-muted: #9ca3af;
+      --border-dark: #374151;
+      --hover-dark: #374151;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Quicksand', sans-serif;
+      scroll-behavior: smooth;
+      user-select: none;
+    }
+
+    body {
+      background: var(--secondary-dark);
+      color: var(--text-light);
+      line-height: 1.6;
+    }
+
+    /* Navbar */
+    nav {
+        background: var(--tertiary-dark);
+        color: var(--text-light);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 2rem;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        border-bottom: 1px solid var(--border-dark);
+    }
+    nav .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: var(--primary-green);
+    }
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 1.5rem;
+      transition: all 0.3s ease;
+    }
+    nav ul li a {
+      color: var(--text-light);
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+    nav ul li a:hover {
+      color: var(--primary-green);
+    }
+    .auth-btns a {
+      background: var(--primary-green);
+      color: var(--secondary-dark);
+      padding: 0.4rem 0.8rem;
+      border-radius: 5px;
+      margin-left: 0.5rem;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+    .auth-btns a:hover {
+      opacity: 0.9;
+    }
+
+    /* Hamburger */
+    .menu-toggle {
+        display: none;
+        flex-direction: column;
+        cursor: pointer;
+        gap: 5px;
+    }
+    .menu-toggle span {
+        width: 25px;
+        height: 3px;
+        background: var(--text-light);
+        border-radius: 2px;
+        transition: 0.3s;
+    }
+
+    /* Mobile Styles */
+  @media(max-width: 768px) {
+        nav ul {
+        display: none;
+        flex-direction: column;
+        background: var(--secondary-dark);
+        position: absolute;
+        top: 70px;
+        right: 20px;
+        width: 220px;
+        border-radius: 8px;
+        padding: 1rem;
+        opacity: 0;
+        transform: translateY(-10px);
+        transition: all 0.3s ease-in-out;
+        border: 1px solid var(--border-dark);
+        }
+        nav ul.active {
+        display: flex;
+        opacity: 1;
+        transform: translateY(0);
+        }
+        nav ul li a {
+        color: var(--text-light);
+        padding: 0.5rem 0;
+        }
+        .menu-toggle {
+        display: flex;
+        }
+        .auth-btns {
+        display: none;
+        }
+    }
+
+    /* Banner */
+    .slider {
+        position: relative;
+        width: 100%;
+        height: 56.25vw;
+        max-height: 70vh; 
+        overflow: hidden;
+        background: var(--secondary-dark);
+    }
+
+    .slides {
+        display: flex;
+        transition: transform 1s ease-in-out;
+    }
+
+    .slide {
+        flex: 0 0 100%;
+    }
+
+    .slide img {
+        width: 100%;
+        height: fit-content;
+        display: block;
+        filter: brightness(0.7) contrast(1.1);
+    }
+
+    .dots {
+        position: absolute;
+        bottom: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 10px;
+    }
+
+    .dot {
+        width: 12px;
+        height: 12px;
+        background-color: var(--text-muted);
+        border-radius: 50%;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .dot.active {
+        background-color: var(--primary-green);
+    }
+
+    /* General Overlay Setup */
+    .overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+    }
+
+    /* Layer 1: Dark Overlay */
+    /* .layer1 {
+        background: rgba(0, 0, 0, 0.6);
+        z-index: 1;
+    } */
+
+    /* Layer 2: Soft Glow */
+    .layer2 {
+        background: rgba(140, 191, 58, 0.1);
+        mix-blend-mode: overlay;
+        z-index: 2;
+    }
+
+    /* Layer 3: Strong Dark Overlay */
+    .layer3 {
+        background: rgba(0, 0, 0, 0.4);
+        z-index: 3;
+    }
+
+    /* Ensure Slides Stack Properly */
+    .slide {
+        position: relative;
+    }
+
+    .slide-title {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: white;
+        font-size: 3vw;
+        text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.9);
+        z-index: 4;
+        text-align: center;
+        font-weight: 600;
+    }
+
+    @media (max-width: 768px) {
+        .slide-title {
+            font-size: 5vw;
+        }
+    }
+
+    /* Hero */
+    .hero {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 5rem 2rem;
+      background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)),
+        url("/images/Eco-friendly-electronics.webp") no-repeat center/cover;
+      color: var(--text-light);
+    }
+    .hero h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+    .hero p {
+      font-size: 1.2rem;
+      margin-bottom: 1.5rem;
+      color: var(--text-muted);
+    }
+    .hero .cta {
+      background: var(--primary-green);
+      color: var(--secondary-dark);
+      padding: 0.8rem 1.5rem;
+      border-radius: 25px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: transform 0.3s ease;
+    }
+    .hero .cta:hover {
+      transform: translateY(-2px);
+    }
+
+    /* Sections */
+    section {
+      padding: 3rem 2rem;
+      max-width: 1100px;
+      margin: auto;
+    }
+    section h2 {
+      text-align: center;
+      color: var(--text-light);
+      margin-bottom: 2rem;
+      font-size: 2rem;
+    }
+
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+    }
+    .card {
+      background: var(--tertiary-dark);
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+      padding: 1.5rem;
+      text-align: center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      border: 1px solid var(--border-dark);
+    }
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 16px rgba(140, 191, 58, 0.2);
+    }
+    .card img {
+      max-width: 100%;
+      height: 160px;
+      object-fit: cover;
+      border-radius: 10px;
+      margin-bottom: 1rem;  
+      filter: brightness(0.8);
+    }
+    .card h3 {
+      margin-bottom: 0.5rem;
+      color: var(--primary-green);
+    }
+    .card p {
+      color: var(--text-muted);
+    }
+
+    /* Contact */
+    .contact form {
+      display: grid;
+      gap: 1rem;
+      max-width: 600px;
+      margin: auto;
+    }
+    .contact input, .contact textarea {
+      width: 100%;
+      padding: 0.8rem;
+      border: 1px solid var(--border-dark);
+      border-radius: 8px;
+      background: var(--tertiary-dark);
+      color: var(--text-light);
+    }
+    .contact input::placeholder, .contact textarea::placeholder {
+      color: var(--text-muted);
+    }
+    .contact input:focus, .contact textarea:focus {
+      outline: none;
+      border-color: var(--primary-green);
+    }
+    .contact button {
+      background: var(--primary-green);
+      color: var(--secondary-dark);
+      padding: 0.8rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: transform 0.3s ease;
+    }
+    .contact button:hover {
+      transform: translateY(-2px);
+    }
+
+    /* Drop Down */
+    .dropdown {
+      position: relative;
+      display: inline-block;
+    }
+
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      right: 0;
+      background-color: var(--tertiary-dark);
+      min-width: 120px;
+      box-shadow: 0px 8px 16px rgba(0,0,0,0.4);
+      border-radius: 8px;
+      z-index: 1;
+      border: 1px solid var(--border-dark);
+    }
+
+    .dropdown-content a {
+      background-color: transparent;
+      color: var(--text-light);
+      padding: 10px 14px;
+      text-decoration: none;
+      display: block;
+      transition: background-color 0.3s ease;
+    }
+
+    .dropdown-content a:hover {
+      background-color: var(--hover-dark);
+      color: var(--primary-green);
+    }
+
+    .show {
+      display: block;
+    }
+
+    .profile-img {
+      width: 30px; 
+      height: 30px; 
+      border-radius: 50%; 
+      cursor: pointer;
+      border: 2px solid var(--primary-green);
+    }
+
+    /* About section styling */
+    #about p {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+    }
+
+    /* Footer */
+    footer {
+      background: var(--secondary-dark);
+      color: var(--text-light);
+      text-align: center;
+      padding: 1rem;
+      margin-top: 2rem;
+      border-top: 1px solid var(--border-dark);
+    }
+
+    /* Auth buttons user welcome text */
+    .auth-btns span {
+      color: var(--text-light);
+    }
+
+    .auth-btns span [style*="font-weight: bold"] {
+      color: var(--primary-green);
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="#home"><img src="/images/logo.png" style="width: 40px;"></a>
+
+    <!-- Hamburger button -->
+    <div class="menu-toggle" id="menu-toggle">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+
+    <ul id="nav-links">
+        <li><a href="#home">Home</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="/devices">Devices</a></li>
+        <li><a href="#services">Services</a></li>
+        <li><a href="#contact">Contact</a></li>
+    </ul>
+
+    <div class="auth-btns">
+        <% if (user) { %>
+        <span>Welcome,<span style="font-weight: bold;" onclick="toggleDropdown()"> <%= user.name %> </span>
+        <% if(user?.picture){ %>
+          <div class="dropdown">
+          <!-- Profile Image (Dropdown Trigger) -->
+          <img src="<%= user.picture %>" alt="Profile" class="profile-img" onclick="toggleDropdown()">
+
+          <!-- Dropdown Menu -->
+          <div id="dropdownMenu" class="dropdown-content">
+            <a href="/profile">Profile</a>
+            <a href="" onclick="document.getElementById('logoutForm').submit(); return false;">Logout</a>
+          </div>
+        </div>
+        <% } %>
+        </span>
+        <% } else { %>
+        <a href="/login">Login</a>
+        <a href="/signup">Signup</a>
+        <% } %>
+    </div>
+    </nav>
+
+  <!-- Banner -->
+    <div class="slider" id="home">
+        <div class="slides">
+            <div class="slide">
+                <img src="/uploads/banner2.png" alt="Slide 1">
+                <h1 class="slide-title">Experience the Future of Smart Living</h1>
+                <p>Cutting-edge IoT solutions for a safer, smarter, and energy-efficient home.</p>
+                <a href="#services" class="cta">Explore Services</a>
+                <div class="overlay layer1"></div>
+                <div class="overlay layer2"></div>
+                <div class="overlay layer3"></div>
+            </div>
+            <div class="slide">
+                <img src="/uploads/banner3.png" alt="Slide 2">
+                <h1 class="slide-title">High-Quality Electronic Components</h1>
+                <div class="overlay layer1"></div>
+                <div class="overlay layer2"></div>
+                <div class="overlay layer3"></div>
+            </div>
+            <div class="slide">
+                <img src="/uploads/banner1.png" alt="Slide 3">
+                <h1 class="slide-title">Wide Range of Circuit Solutions</h1>
+                <div class="overlay layer1"></div>
+                <div class="overlay layer2"></div>
+                <div class="overlay layer3"></div>
+            </div>
+        </div>
+        <div class="dots">
+            <div class="dot active" data-slide="0"></div>
+            <div class="dot" data-slide="1"></div>
+            <div class="dot" data-slide="2"></div>
+        </div>
+    </div>
+
+  <!-- About -->
+  <section id="about">
+    <h2>About Us</h2>
+    <p style="text-align:center;">
+      We specialize in providing top-notch IoT home automation solutions. 
+      From smart lighting to advanced security, we bring innovation to your doorstep.
+    </p>
+  </section>
+
+  <!-- Services -->
+  <section id="services">
+    <h2>Our Smart Home Solutions</h2>
+    <div class="services-grid">
+      <div class="card">
+        <img src="/images/lightingcontrolsystems.jpeg" alt="Lighting Control">
+        <h3>Lighting Control Systems</h3>
+        <p>Manage and automate your home lighting with ease and efficiency.</p>
+      </div>
+      <div class="card">
+        <img src="/images/lightingcontrolsystems.jpeg" alt="Energy Management">
+        <h3>Energy Management Systems</h3>
+        <p>Track, optimize, and save on energy consumption effortlessly.</p>
+      </div>
+      <div class="card">
+        <img src="/images/lightingcontrolsystems.jpeg" alt="Voice Assistant">
+        <h3>Voice-Controlled Assistants</h3>
+        <p>Control your entire home with just your voice using AI assistants.</p>
+      </div>
+      <div class="card">
+        <img src="/images/lightingcontrolsystems.jpeg" alt="Smart Locks">
+        <h3>Smart Locks</h3>
+        <p>Enhance your home security with modern, keyless smart locking systems.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section id="contact" class="contact">
+    <h2>Contact Us</h2>
+    <form>
+      <input type="text" name="name" placeholder="Your Name" required />
+      <input type="email" name="email" placeholder="Your Email" required />
+      <textarea name="message" rows="5" placeholder="Your Message" required></textarea>
+      <button type="submit">Send Message</button>
+    </form>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; <%= new Date().getFullYear() %> IMBED SOFTWARE. All rights reserved.</p>
+  </footer>
+
+  <script>
+    const toggle = document.getElementById("menu-toggle");
+    const navLinks = document.getElementById("nav-links");
+
+    toggle.addEventListener("click", () => {
+        navLinks.classList.toggle("active");
+    });
+
+    // Close menu when link clicked
+    document.querySelectorAll("#nav-links a").forEach(link => {
+        link.addEventListener("click", () => {
+        navLinks.classList.remove("active");
+        });
+    });
+
+    // Banner
+        const slides = document.querySelector('.slides');
+        const dots = document.querySelectorAll('.dot');
+        let currentIndex = 0;
+
+        function showSlide(index) {
+            slides.style.transform = `translateX(-${index * 100}%)`;
+            dots.forEach(dot => dot.classList.remove('active'));
+            dots[index].classList.add('active');
+        }
+
+        function nextSlide() {
+            currentIndex = (currentIndex + 1) % dots.length;
+            showSlide(currentIndex);
+        }
+
+        dots.forEach(dot => {
+            dot.addEventListener('click', () => {
+                currentIndex = parseInt(dot.dataset.slide);
+                showSlide(currentIndex);
+            });
+        });
+        setInterval(nextSlide, 5000);
+  </script>
+  <script>
+    // Drop down
+    function toggleDropdown() {
+      document.getElementById("dropdownMenu").classList.toggle("show");
+    }
+
+    // Close dropdown if clicked outside
+    window.onclick = function(event) {
+      if (!event.target.matches('.profile-img')) {
+        const dropdown = document.getElementById("dropdownMenu");
+        if (dropdown.classList.contains('show')) {
+          dropdown.classList.remove('show');
+        }
+      }
+    }
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <form id="logoutForm" action="/logout" method="post" style="display: none;"></form>
+</body>
+</html>

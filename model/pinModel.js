@@ -1,8 +1,12 @@
 const mongoose = require('mongoose')
 
-const dataSchema = new mongoose.Schema(
+const pinSchema = new mongoose.Schema(
   {
-    pin:{
+    name:{
+      type: String,
+      required: true,
+    },
+    state:{
       type: Boolean,
       default: false,
     },
@@ -11,12 +15,16 @@ const dataSchema = new mongoose.Schema(
       ref: 'users',
       required: true,
     },
+    roomId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'room'
+    }
   },
   {
     timestamps: true,
   }
 )
 
-dataSchema.index({ createdAt: 1 })
-const Data = mongoose.model('data', dataSchema)
-module.exports = Data
+pinSchema.index({ createdAt: 1 })
+const Pins = mongoose.model('pins', pinSchema)
+module.exports = Pins

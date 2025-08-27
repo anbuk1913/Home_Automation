@@ -1,0 +1,1765 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>User Management</title>
+  <link rel="icon" href="/images/logo.png">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/toast.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <style>
+    :root {
+      --primary-green: #8cbf3a;
+      --secondary-gray: #374151;
+      --bg-dark: #1a1a1a;
+      --bg-card: #262626;
+      --bg-darker: #0f0f0f;
+      --light-green: #a5d155;
+      --dark-green: #75a832;
+      --light-gray: #9ca3af;
+      --dark-gray: #1f2937;
+      --border-dark: #404040;
+      --text-light: #e5e7eb;
+      --text-gray: #9ca3af;
+      --text-dark: #374151;
+      --shadow-green: rgba(140, 191, 58, 0.15);
+      --shadow-medium: rgba(140, 191, 58, 0.25);
+      --shadow-heavy: rgba(0, 0, 0, 0.3);
+      --hover-bg: #333333;
+    }
+
+    * {
+      font-family: 'Quicksand', sans-serif;
+      user-select: none;
+    }
+
+    body {
+      background: linear-gradient(135deg, var(--bg-darker) 0%, var(--bg-dark) 100%);
+      color: var(--text-light);
+      min-height: 100vh;
+      padding: 0;
+      margin: 0;
+    }
+
+    .main-container {
+      background: var(--bg-card);
+      border-radius: 20px;
+      box-shadow: 0 20px 60px var(--shadow-heavy);
+      padding: 1rem;
+      margin: 1rem;
+      max-width: 100%;
+      border: 1px solid var(--border-dark);
+    }
+
+    .main-header {
+      color: var(--primary-green);
+      font-weight: 700;
+      font-size: 1.8rem;
+      text-align: center;
+      margin-bottom: 1.5rem;
+      position: relative;
+      word-break: break-word;
+    }
+
+    .main-header::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 3px;
+      background: linear-gradient(90deg, var(--primary-green), var(--light-green));
+      border-radius: 2px;
+    }
+
+    .search-container {
+      background: var(--bg-darker);
+      border: 2px solid var(--border-dark);
+      border-radius: 16px;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 4px 20px var(--shadow-heavy);
+      transition: all 0.3s ease;
+    }
+
+    .search-container:hover {
+      border-color: var(--primary-green);
+      box-shadow: 0 8px 30px var(--shadow-green);
+    }
+
+    .search-input {
+      background: var(--bg-card);
+      border: 2px solid var(--border-dark);
+      border-radius: 12px;
+      color: var(--text-light);
+      padding: 12px 15px 12px 40px;
+      font-size: 0.95rem;
+      transition: all 0.3s ease;
+      width: 100%;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: var(--primary-green);
+      box-shadow: 0 0 0 3px var(--shadow-green);
+      background: var(--bg-darker);
+      color: var(--text-light);
+    }
+
+    .search-input::placeholder {
+      color: var(--text-gray);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--primary-green);
+      font-size: 1rem;
+    }
+
+    .search-btn {
+      background: linear-gradient(135deg, var(--primary-green), var(--light-green));
+      border: none;
+      border-radius: 12px;
+      color: white;
+      padding: 12px 20px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px var(--shadow-green);
+      width: 100%;
+    }
+
+    .search-btn:hover {
+      background: linear-gradient(135deg, var(--dark-green), var(--primary-green));
+      transform: translateY(-2px);
+      box-shadow: 0 6px 25px var(--shadow-medium);
+    }
+
+    /* Card View for Mobile */
+    .user-card {
+      background: var(--bg-darker);
+      border: 1px solid var(--border-dark);
+      border-radius: 16px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 4px 15px var(--shadow-heavy);
+      transition: all 0.3s ease;
+      display: none;
+    }
+
+    .user-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px var(--shadow-green);
+      border-color: var(--primary-green);
+    }
+
+    .user-card-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 1rem;
+      gap: 1rem;
+    }
+
+    .user-card-body {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .user-card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    /* Desktop Table View */
+    .table-container {
+      background: var(--bg-darker);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 8px 30px var(--shadow-heavy);
+      border: 1px solid var(--border-dark);
+      display: block;
+    }
+
+    .table-header tr th, .table-row td{
+      background-color: var(--bg-darker);
+    }
+
+    .table-header {
+      background: linear-gradient(135deg, var(--secondary-gray), var(--dark-gray));
+    }
+
+    .table-header th {
+      border: none;
+      color: var(--text-light);
+      font-weight: 600;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 15px 10px;
+      white-space: nowrap;
+    }
+
+    .table-row {
+      background: var(--bg-darker);
+      border-bottom: 1px solid var(--border-dark);
+      transition: all 0.3s ease;
+    }
+
+    .table-row:hover {
+      background: var(--hover-bg);
+      transform: translateY(0.6px);
+      box-shadow: 3px 0 10px var(--shadow-green);
+    }
+
+    .table-row td {
+      border: none;
+      color: var(--text-light);
+      padding: 15px 10px;
+      vertical-align: middle;
+      font-size: 0.9rem;
+    }
+
+    .profile-img {
+      border: 3px solid var(--primary-green);
+      border-radius: 50%;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px var(--shadow-green);
+    }
+
+    .profile-img:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 20px var(--shadow-medium);
+      border-color: var(--light-green);
+    }
+
+    .status-badge {
+      cursor: pointer;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+    }
+
+    .status-active {
+      background: linear-gradient(135deg, var(--primary-green), var(--light-green));
+      color: white;
+      box-shadow: 0 3px 10px var(--shadow-green);
+    }
+
+    .status-inactive {
+      background: linear-gradient(135deg, #ef4444, #f87171);
+      color: white;
+      box-shadow: 0 3px 10px rgba(239, 68, 68, 0.3);
+    }
+
+    .status-pending {
+      background: linear-gradient(135deg, #f59e0b, #fbbf24);
+      color: white;
+      box-shadow: 0 3px 10px rgba(245, 158, 11, 0.3);
+    }
+
+    .status-completed {
+      background: linear-gradient(135deg, var(--secondary-gray), var(--light-gray));
+      color: white;
+      box-shadow: 0 3px 10px var(--shadow-heavy);
+    }
+
+    .action-btn {
+      background: linear-gradient(135deg, var(--primary-green), var(--light-green));
+      border: none;
+      border-radius: 8px;
+      color: white;
+      padding: 8px 16px;
+      font-weight: 600;
+      font-size: 0.8rem;
+      transition: all 0.3s ease;
+      box-shadow: 0 3px 10px var(--shadow-green);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      text-decoration: none;
+    }
+
+    .action-btn:hover {
+      background: linear-gradient(135deg, var(--dark-green), var(--primary-green));
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px var(--shadow-medium);
+      color: white;
+    }
+
+    /* Responsive Pagination */
+    .pagination {
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.25rem;
+    }
+
+    .pagination .page-item .page-link {
+      background: var(--bg-card);
+      border: 2px solid var(--border-dark);
+      color: var(--text-gray);
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      padding: 8px 12px;
+      transition: all 0.3s ease;
+      min-width: 40px;
+      text-align: center;
+    }
+
+    .pagination .page-item.active .page-link {
+      background: linear-gradient(135deg, var(--primary-green), var(--light-green));
+      border-color: var(--primary-green);
+      color: white;
+      box-shadow: 0 3px 10px var(--shadow-green);
+    }
+
+    .pagination .page-item .page-link:hover {
+      background: var(--primary-green);
+      border-color: var(--primary-green);
+      color: white;
+      transform: translateY(-1px);
+    }
+
+    .pagination .page-item.disabled .page-link {
+      background: var(--bg-dark);
+      border-color: var(--border-dark);
+      color: var(--text-dark);
+    }
+
+    /* Modal Responsiveness */
+    .modal-content {
+      background: var(--bg-card);
+      border: 1px solid var(--border-dark);
+      border-radius: 20px;
+      box-shadow: 0 20px 60px var(--shadow-heavy);
+      margin: 1rem;
+    }
+
+    .modal-header {
+      background: linear-gradient(135deg, var(--secondary-gray), var(--dark-gray));
+      color: var(--text-light);
+      border-radius: 20px 20px 0 0;
+      border-bottom: 1px solid var(--border-dark);
+      padding: 1rem 1.5rem;
+    }
+
+    .modal-body {
+      padding: 1.5rem;
+      background: var(--bg-card);
+    }
+
+    .modal-footer {
+      border-top: 1px solid var(--border-dark);
+      background: var(--bg-darker);
+      border-radius: 0 0 20px 20px;
+      padding: 1rem 1.5rem;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .form-control {
+      background: var(--bg-darker);
+      border: 2px solid var(--border-dark);
+      border-radius: 10px;
+      color: var(--text-light);
+      transition: all 0.3s ease;
+      font-size: 0.95rem;
+      padding: 10px 12px;
+    }
+
+    .form-control:focus {
+      background: var(--bg-card);
+      border-color: var(--primary-green);
+      box-shadow: 0 0 0 3px var(--shadow-green);
+      color: var(--text-light);
+    }
+
+    .form-control::placeholder {
+      color: var(--text-gray);
+    }
+
+    .form-label {
+      color: var(--text-light);
+      font-weight: 600;
+      margin-bottom: 6px;
+      font-size: 0.9rem;
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, var(--primary-green), var(--light-green));
+      border: none;
+      border-radius: 10px;
+      font-weight: 600;
+      padding: 10px 20px;
+      box-shadow: 0 4px 15px var(--shadow-green);
+      transition: all 0.3s ease;
+      flex: 1;
+    }
+
+    .btn-success:hover {
+      background: linear-gradient(135deg, var(--dark-green), var(--primary-green));
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px var(--shadow-medium);
+    }
+
+    .btn-secondary {
+      background: var(--secondary-gray);
+      border: none;
+      border-radius: 10px;
+      color: var(--text-light);
+      font-weight: 600;
+      padding: 10px 20px;
+      transition: all 0.3s ease;
+      flex: 1;
+    }
+
+    .btn-secondary:hover {
+      background: var(--dark-gray);
+      color: var(--text-light);
+      transform: translateY(-2px);
+    }
+
+    .alert-warning {
+      background: linear-gradient(135deg, #92400e, #b45309);
+      border: 2px solid #f59e0b;
+      border-radius: 15px;
+      color: #fbbf24;
+      font-weight: 600;
+      padding: 1rem;
+      box-shadow: 0 4px 15px rgba(245, 158, 11, 0.2);
+      text-align: center;
+    }
+
+    .form-check-input:checked {
+      background-color: var(--primary-green);
+      border-color: var(--primary-green);
+    }
+
+    .form-check-input {
+      background-color: var(--bg-darker);
+      border-color: var(--border-dark);
+    }
+
+    .form-check-input:focus {
+      box-shadow: 0 0 0 3px var(--shadow-green);
+    }
+
+    .form-check-label {
+      font-size: 0.9rem;
+      color: var(--text-light);
+      font-weight: 500;
+    }
+
+    .btn-close {
+      opacity: 0.8;
+      filter: invert(1);
+    }
+
+    .btn-close:hover {
+      opacity: 1;
+    }
+
+    .user-name {
+      font-weight: 600;
+      color: var(--text-light);
+      margin-bottom: 2px;
+      font-size: 1rem;
+    }
+
+    .user-email {
+      color: var(--text-gray);
+      font-size: 0.85rem;
+    }
+
+    .info-label {
+      color: var(--text-gray);
+      font-size: 0.8rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 2px;
+    }
+
+    .info-value {
+      color: var(--text-light);
+      font-weight: 500;
+    }
+
+    /* Responsive Media Queries */
+    @media (min-width: 992px) {
+      .main-container {
+        padding: 2rem;
+        margin: 2rem auto;
+        max-width: 1400px;
+      }
+
+      .main-header {
+        font-size: 2.5rem;
+        margin-bottom: 2rem;
+      }
+
+      .main-header::after {
+        width: 80px;
+        height: 4px;
+      }
+
+      .search-container {
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+      }
+
+      .search-input {
+        padding: 15px 20px 15px 50px;
+        font-size: 1rem;
+      }
+
+      .search-icon {
+        left: 18px;
+        font-size: 1.1rem;
+      }
+
+      .search-btn {
+        padding: 15px 30px;
+        font-size: 1rem;
+        width: auto;
+      }
+
+      .table-container {
+        display: block !important;
+      }
+
+      .mobile-cards {
+        display: none !important;
+      }
+
+      .user-card {
+        display: none;
+      }
+
+      .table-header th {
+        padding: 20px 15px;
+        font-size: 0.9rem;
+      }
+
+      .table-row td {
+        padding: 20px 15px;
+        font-size: 1rem;
+      }
+
+      .status-badge {
+        padding: 8px 16px;
+        font-size: 0.8rem;
+      }
+
+      .action-btn {
+        padding: 10px 20px;
+        font-size: 0.85rem;
+      }
+
+      .pagination .page-item .page-link {
+        padding: 10px 15px;
+        font-size: 1rem;
+        margin: 0 3px;
+      }
+
+      .modal-content {
+        margin: 0;
+      }
+
+      .modal-header {
+        padding: 1.5rem 2rem;
+      }
+
+      .modal-body {
+        padding: 2rem;
+      }
+
+      .modal-footer {
+        padding: 1.5rem 2rem;
+        flex-wrap: nowrap;
+      }
+
+      .btn-success,
+      .btn-secondary {
+        flex: none;
+      }
+    }
+
+    @media (max-width: 991px) {
+      .table-container {
+        display: none !important;
+      }
+
+      .mobile-cards {
+        display: block !important;
+      }
+
+      .user-card {
+        display: block;
+      }
+
+      .search-btn {
+        margin-top: 1rem;
+      }
+
+      .main-header {
+        font-size: 1.8rem;
+      }
+
+      .user-card-body {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+      }
+
+      .pagination .page-item .page-link {
+        padding: 6px 10px;
+        font-size: 0.85rem;
+        min-width: 35px;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .main-container {
+        margin: 0.5rem;
+        padding: 1rem;
+        border-radius: 15px;
+      }
+
+      .main-header {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+      }
+
+      .search-container {
+        padding: 1rem;
+      }
+
+      .user-card {
+        padding: 1rem;
+      }
+
+      .user-card-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 0.5rem;
+      }
+
+      .user-card-footer {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.75rem;
+      }
+
+      .status-badge {
+        justify-content: center;
+      }
+
+      .action-btn {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .modal-dialog {
+        margin: 0.5rem;
+      }
+
+      .modal-content {
+        border-radius: 15px;
+      }
+
+      .modal-header {
+        border-radius: 15px 15px 0 0;
+        padding: 1rem;
+      }
+
+      .modal-body {
+        padding: 1rem;
+      }
+
+      .modal-footer {
+        padding: 1rem;
+        border-radius: 0 0 15px 15px;
+        flex-direction: column;
+      }
+
+      .btn-success,
+      .btn-secondary {
+        width: 100%;
+      }
+
+      .pagination {
+        gap: 0.125rem;
+      }
+
+      .pagination .page-item .page-link {
+        padding: 5px 8px;
+        font-size: 0.8rem;
+        min-width: 30px;
+      }
+    }
+
+    /* Loading States */
+    .search-input:focus+.search-icon {
+      color: var(--primary-green);
+      transform: translateY(-50%) scale(1.1);
+    }
+
+    /* Floating Animation */
+    @keyframes float {
+
+      0%,
+      100% {
+        transform: translateY(0px);
+      }
+
+      50% {
+        transform: translateY(-5px);
+      }
+    }
+
+    .floating-element {
+      animation: float 3s ease-in-out infinite;
+    }
+
+    /* Touch-friendly improvements */
+    @media (hover: none) {
+
+      .table-row:hover,
+      .user-card:hover,
+      .action-btn:hover,
+      .search-btn:hover {
+        transform: none;
+      }
+
+      .profile-img:hover {
+        transform: none;
+      }
+    }
+
+    /* Navigation Styles */
+    .navbar-custom {
+      background: linear-gradient(135deg, var(--bg-darker), var(--bg-dark));
+      box-shadow: 0 4px 20px var(--shadow-heavy);
+      padding: 1rem 0;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      border-bottom: 1px solid var(--border-dark);
+    }
+
+    .navbar-brand {
+      color: var(--text-light) !important;
+      font-weight: 700;
+      font-size: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .navbar-brand:hover {
+      color: var(--primary-green) !important;
+      transform: scale(1.05);
+      transition: all 0.3s ease;
+    }
+
+    .navbar-nav .nav-link {
+      color: var(--text-light) !important;
+      font-weight: 500;
+      padding: 0.75rem 1.25rem !important;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      position: relative;
+      margin: 0 0.25rem;
+    }
+
+    .navbar-nav .nav-link:hover {
+      color: var(--primary-green) !important;
+      background: rgba(140, 191, 58, 0.15);
+      transform: translateY(-2px);
+    }
+
+    .navbar-nav .nav-link.active {
+      color: var(--primary-green) !important;
+      background: rgba(140, 191, 58, 0.2);
+      font-weight: 600;
+    }
+
+    .navbar-nav .nav-link.active::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 30px;
+      height: 3px;
+      background: var(--primary-green);
+      border-radius: 2px;
+    }
+
+    .navbar-toggler {
+      border: 2px solid var(--primary-green);
+      border-radius: 8px;
+      padding: 0.5rem;
+    }
+
+    .navbar-toggler:focus {
+      box-shadow: 0 0 0 3px var(--shadow-green);
+    }
+
+    .navbar-toggler-icon {
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='%238cbf3a' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+    }
+
+    .logout-btn {
+      background: linear-gradient(135deg, #ef4444, #f87171);
+      border: none;
+      color: white !important;
+      padding: 0.75rem 1.25rem !important;
+      border-radius: 8px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-shadow: 0 3px 10px rgba(239, 68, 68, 0.3);
+    }
+
+    .logout-btn:hover {
+      background: linear-gradient(135deg, #dc2626, #ef4444);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(239, 68, 68, 0.4);
+      color: white !important;
+    }
+
+    /* Mobile Navigation Improvements */
+    @media (max-width: 991px) {
+      .navbar-collapse {
+        background: var(--bg-card);
+        margin-top: 1rem;
+        padding: 1rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px var(--shadow-heavy);
+        border: 1px solid var(--border-dark);
+      }
+
+      .navbar-nav {
+        gap: 0.5rem;
+      }
+
+      .navbar-nav .nav-link {
+        text-align: center;
+        padding: 1rem !important;
+        border-radius: 8px;
+        margin: 0.25rem 0;
+      }
+
+      .logout-btn {
+        margin-top: 0.5rem;
+        width: 100%;
+        text-align: center;
+      }
+    }
+
+    /* Adjust main container for navbar */
+    .main-container {
+      margin-top: 1rem;
+    }
+
+    @media (min-width: 992px) {
+      .main-container {
+        margin-top: 2rem;
+      }
+    }
+
+    /* Dark theme form validation styles */
+    .form-control.is-invalid {
+      border-color: #ef4444;
+      background: var(--bg-darker);
+      color: var(--text-light);
+    }
+
+    .form-control.is-valid {
+      border-color: var(--primary-green);
+      background: var(--bg-darker);
+      color: var(--text-light);
+    }
+
+    .invalid-feedback {
+      color: #f87171;
+    }
+
+    .valid-feedback {
+      color: var(--primary-green);
+    }
+
+    /* Dark scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg-darker);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border-dark);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--primary-green);
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Navigation Bar -->
+  <nav class="navbar navbar-expand-lg navbar-custom">
+    <div class="container">
+      <a class="navbar-brand" href="/">
+        <img src="/images/logo.png" style="width: 30px;">
+        Imbed Software
+      </a>
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/" id="homeLink">
+              <i class="fas fa-home me-2"></i>Home
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="/admin/users" id="clientsLink">
+              <i class="fas fa-users me-2"></i>Clients
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/admin/requests" id="requestsLink">
+              <i class="fas fa-file-alt me-2"></i>Requests
+            </a>
+          </li>
+        </ul>
+
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link logout-btn" href="/logout" id="logoutLink">
+              <i class="fas fa-sign-out-alt me-2"></i>Logout
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="main-container">
+    <h1 class="main-header">
+      <i class="fas fa-users-cog me-2"></i>Client Management
+    </h1>
+
+    <!-- Search Form -->
+    <div class="search-container">
+      <div class="row g-3">
+        <div class="col-lg-10 col-12">
+          <div class="position-relative">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" class="search-input" id="searchInput" placeholder="Search by name or email..."
+              name="search">
+          </div>
+        </div>
+        <div class="col-lg-2 col-12">
+          <button class="search-btn" data-bs-toggle="modal" data-bs-target="#userModal">
+            Add New Client
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <% if (users && users.length> 0) { %>
+      <!-- Desktop Table View -->
+      <div class="table-container">
+        <div class="table-responsive">
+          <table class="table align-middle mb-0">
+            <thead class="table-header">
+              <tr>
+                <th scope="col"><i class="fas fa-user-circle me-1"></i>Profile</th>
+                <th scope="col"><i class="fas fa-user me-1"></i>Name</th>
+                <th scope="col"><i class="fas fa-envelope me-1"></i>Email</th>
+                <th scope="col"><i class="fas fa-phone me-1"></i>Phone</th>
+                <th scope="col"><i class="fas fa-clock me-1"></i>Request</th>
+                <th scope="col"><i class="fas fa-toggle-on me-1"></i>Status</th>
+                <th scope="col"><i class="fas fa-calendar me-1"></i>Created</th>
+                <th scope="col"><i class="fas fa-cog me-1"></i>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% users.forEach(function(user) { %>
+                <tr class="table-row">
+                  <td>
+                    <% if (user.picture) { %>
+                      <img src="<%- user.picture %>" alt="Profile picture of <%- user.name %>" class="profile-img"
+                        width="45" height="45">
+                    <% } else { %>
+                        <img src="/images/profile.png" alt="Default profile picture" class="profile-img" width="45"
+                          height="45">
+                    <% } %>
+                  </td>
+                  <td>
+                    <div class="user-name"><%- user.name || 'Unnamed User' %></div>
+                  </td>
+                  <td>
+                    <div class="user-email"><%- user.email || 'N/A' %></div>
+                  </td>
+                  <td><%- user.phone || 'N/A' %></td>
+                  <td>
+                    <% if (user.request) { %>
+                      <span class="status-badge status-pending">
+                        <i class="fas fa-hourglass-half"></i>Pending
+                      </span>
+                      <% } else { %>
+                        <span class="status-badge status-completed">
+                          <i class="fas fa-check-circle"></i>Completed
+                        </span>
+                        <% } %>
+                  </td>
+                  <td>
+                    <% if (user.isActive) { %>
+                      <span class="status-badge status-active">
+                        <i class="fas fa-circle"></i>Active
+                      </span>
+                      <% } else { %>
+                        <span class="status-badge status-inactive">
+                          <i class="fas fa-circle"></i>Blocked
+                        </span>
+                        <% } %>
+                  </td>
+                  <td>
+                    <%= user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A' %>
+                  </td>
+                  <td>
+                    <button class="action-btn edit-user" data-id="<%= user._id %>" data-name="<%= user.name %>"
+                      data-email="<%= user.email %>" data-phone="<%= user.phone %>" data-active="<%= user.isActive %>"
+                      data-bs-toggle="modal" data-bs-target="#editUserModal">
+                      <i class="fas fa-edit"></i>Edit
+                    </button>
+                  </td>
+                </tr>
+                <% }); %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Mobile Card View -->
+      <div class="mobile-cards">
+        <% users.forEach(function(user) { %>
+          <div class="user-card">
+            <div class="user-card-header">
+              <% if (user.picture) { %>
+                <img src="<%- user.picture %>" alt="Profile picture of <%- user.name %>" class="profile-img" width="60"
+                  height="60">
+                <% } else { %>
+                  <img src="/images/profile.png" alt="Default profile picture" class="profile-img" width="60"
+                    height="60">
+                  <% } %>
+                    <div>
+                      <div class="user-name"><%- user.name || 'Unnamed User' %></div>
+                      <div class="user-email"><%- user.email || 'N/A' %></div>
+                    </div>
+            </div>
+
+            <div class="user-card-body">
+              <div>
+                <div class="info-label">Phone</div>
+                <div class="info-value"><%- user.phone || 'N/A' %></div>
+              </div>
+              <div>
+                <div class="info-label">Created</div>
+                <div class="info-value">
+                  <%= user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A' %>
+                </div>
+              </div>
+            </div>
+
+            <div class="user-card-footer">
+              <div class="d-flex gap-2 flex-wrap">
+                <% if (user.request) { %>
+                  <span class="status-badge status-pending">
+                    <i class="fas fa-hourglass-half"></i>Pending
+                  </span>
+                  <% } else { %>
+                    <span class="status-badge status-completed">
+                      <i class="fas fa-check-circle"></i>Completed
+                    </span>
+                    <% } %>
+
+                      <% if (user.isActive) { %>
+                        <span class="status-badge status-active">
+                          <i class="fas fa-circle"></i>Active
+                        </span>
+                        <% } else { %>
+                          <span class="status-badge status-inactive">
+                            <i class="fas fa-circle"></i>Blocked
+                          </span>
+                          <% } %>
+              </div>
+
+              <button class="action-btn edit-user" data-id="<%= user._id %>" data-name="<%= user.name %>"
+                data-email="<%= user.email %>" data-phone="<%= user.phone %>" data-active="<%= user.isActive %>"
+                data-bs-toggle="modal" data-bs-target="#editUserModal">
+                <i class="fas fa-edit"></i>Edit User
+              </button>
+            </div>
+          </div>
+          <% }); %>
+      </div>
+
+      <!-- Pagination -->
+      <nav aria-label="Page navigation" class="mt-4">
+        <ul class="pagination">
+          <% if (page> 1) { %>
+            <li class="page-item">
+              <a class="page-link" href="?page=<%= page - 1 %>&search=<%= search || '' %>" aria-label="Previous">
+                <i class="fas fa-chevron-left"></i>
+              </a>
+            </li>
+            <% } else { %>
+              <li class="page-item disabled">
+                <span class="page-link"><i class="fas fa-chevron-left"></i></span>
+              </li>
+              <% } %>
+
+                <% for (let i=1; i <=totalPages; i++) { %>
+                  <li class="page-item <%= i === page ? 'active' : '' %>">
+                    <a class="page-link" href="?page=<%= i %>&search=<%= search || '' %>">
+                      <%= i %>
+                    </a>
+                  </li>
+                  <% } %>
+
+                    <% if (page < totalPages) { %>
+                      <li class="page-item">
+                        <a class="page-link" href="?page=<%= page + 1 %>&search=<%= search || '' %>" aria-label="Next">
+                          <i class="fas fa-chevron-right"></i>
+                        </a>
+                      </li>
+                      <% } else { %>
+                        <li class="page-item disabled">
+                          <span class="page-link"><i class="fas fa-chevron-right"></i></span>
+                        </li>
+                        <% } %>
+        </ul>
+      </nav>
+      <% } else { %>
+        <div class="alert alert-warning">
+          <i class="fas fa-exclamation-triangle me-2"></i>
+          No users found matching your criteria.
+        </div>
+        <% } %>
+  </div>
+
+  <!-- Edit Modal -->
+  <div class="modal fade" id="editUserModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <form class="modal-content needs-validation" novalidate>
+        <div class="modal-header">
+          <h5 class="modal-title">
+            <i class="fas fa-user-edit me-2"></i>Edit User Details
+          </h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" name="userId" id="editUserId">
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="editName" class="form-label">
+                <i class="fas fa-user me-2"></i>Full Name
+              </label>
+              <input type="text" name="name" class="form-control" id="editName" required>
+              <div class="invalid-feedback">Please enter a name.</div>
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <label for="editEmail" class="form-label">
+                <i class="fas fa-envelope me-2"></i>Email Address
+              </label>
+              <input type="email" name="email" class="form-control" id="editEmail" required>
+              <div class="invalid-feedback">Please provide a valid email.</div>
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <label for="editPhone" class="form-label">
+              <i class="fas fa-phone me-2"></i>Phone Number
+            </label>
+            <input type="text" name="phone" class="form-control" id="editPhone">
+            <div class="invalid-feedback">Phone number must be exactly 10 digits.</div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-check mb-3">
+                <input type="checkbox" class="form-check-input" id="editActive" name="isActive">
+                <label for="editActive" class="form-check-label">
+                  <i class="fas fa-check-circle"></i>Active Client
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-success">
+            <i class="fas fa-save me-2"></i>Save Changes
+          </button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            <i class="fas fa-times me-2"></i>Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Add New Client Modal -->
+  <div class="modal fade" id="userModal" tabindex="-1" aria-labelledby="userModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form id="userForm" novalidate>
+          <div class="modal-header">
+            <h5 class="modal-title" id="userModalLabel">Add New Client</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+
+          <div class="modal-body">
+            <!-- Name -->
+            <div class="mb-3">
+              <label for="name" class="form-label">Name *</label>
+              <input type="text" class="form-control" id="name" name="name" required>
+              <div class="invalid-feedback">Name should contain alphabets only.</div>
+            </div>
+
+            <!-- Email -->
+            <div class="mb-3">
+              <label for="email" class="form-label">Email *</label>
+              <input type="email" class="form-control" id="email" name="email" required>
+              <div class="invalid-feedback">Enter a valid email address.</div>
+            </div>
+
+            <!-- Phone -->
+            <div class="mb-3">
+              <label for="phone" class="form-label">Phone (Optional)</label>
+              <input type="text" class="form-control" id="phone" name="phone" pattern="\d{10}">
+              <div class="invalid-feedback">Phone must be a 10-digit number.</div>
+            </div>
+
+            <!-- Password -->
+            <div class="mb-3">
+              <label for="password" class="form-label">Password *</label>
+              <input type="password" class="form-control" id="password" name="password" required minlength="8">
+              <div class="invalid-feedback">Password must be at least 8 characters long.</div>
+            </div>
+
+            <!-- Status -->
+            <div class="mb-3">
+              <label class="form-label">Status *</label><br>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="status" id="active" value="active" required>
+                <label class="form-check-label" for="active">Active</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="status" id="block" value="block" required>
+                <label class="form-check-label" for="block">Block</label>
+              </div>
+              <div class="invalid-feedback d-block">Please select a status.</div>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-success">Save</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toastContainer">
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        // Attach event listener to populate modal
+        document.querySelectorAll(".edit-user").forEach(btn => {
+          btn.addEventListener("click", () => {
+            const userId = btn.getAttribute("data-id");
+            document.getElementById("editUserId").value = userId;
+            // optional AJAX preload
+          });
+        });
+
+        // Bootstrap validation
+        (function () {
+          const forms = document.querySelectorAll('.needs-validation');
+          Array.from(forms).forEach(form => {
+            form.addEventListener('submit', event => {
+              if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+              }
+              form.classList.add('was-validated');
+            }, false);
+          });
+        })();
+
+        // Enhanced mobile touch interactions
+        if ('ontouchstart' in window) {
+          document.querySelectorAll('.user-card, .action-btn').forEach(element => {
+            element.addEventListener('touchstart', function () {
+              this.style.transform = 'scale(0.98)';
+            });
+            element.addEventListener('touchend', function () {
+              this.style.transform = '';
+            });
+          });
+        }
+      });
+    </script>
+    <script>
+      // Function to update the query and reload the page
+      document.getElementById("searchInput").addEventListener("input", function () {
+        let value = this.value.trim();
+        let url = new URL(window.location.href);
+
+        if (value) {
+          url.searchParams.set("search", value);
+        } else {
+          url.searchParams.delete("search"); // Remove if empty
+        }
+
+        window.location.href = url; // Reload the page with the updated query
+      });
+
+      // Function to pre-fill input and auto-focus after page reload
+      window.addEventListener("DOMContentLoaded", function () {
+        let searchInput = document.getElementById("searchInput");
+        let urlParams = new URLSearchParams(window.location.search);
+        let searchValue = urlParams.get("search");
+
+        if (searchValue) {
+          searchInput.value = searchValue;
+        }
+
+        searchInput.focus(); // Auto-focus on input after reload
+      });
+
+      // Responsive table/card view toggle based on screen size
+      function handleResponsiveView() {
+        const tableContainer = document.querySelector('.table-container');
+        const mobileCards = document.querySelector('.mobile-cards');
+
+        if (window.innerWidth >= 992) {
+          if (tableContainer) {
+            tableContainer.style.display = 'block';
+            tableContainer.style.setProperty('display', 'block', 'important');
+          }
+          if (mobileCards) {
+            mobileCards.style.display = 'none';
+            mobileCards.style.setProperty('display', 'none', 'important');
+          }
+          // Show individual cards as none
+          document.querySelectorAll('.user-card').forEach(card => {
+            card.style.display = 'none';
+          });
+        } else {
+          if (tableContainer) {
+            tableContainer.style.display = 'none';
+            tableContainer.style.setProperty('display', 'none', 'important');
+          }
+          if (mobileCards) {
+            mobileCards.style.display = 'block';
+            mobileCards.style.setProperty('display', 'block', 'important');
+          }
+          // Show individual cards
+          document.querySelectorAll('.user-card').forEach(card => {
+            card.style.display = 'block';
+          });
+        }
+      }
+
+      // Handle window resize
+      window.addEventListener('resize', handleResponsiveView);
+      window.addEventListener('load', handleResponsiveView);
+
+      // Improve mobile modal experience
+      const modal = document.getElementById('editUserModal');
+      if (modal) {
+        modal.addEventListener('shown.bs.modal', function () {
+          // Focus first input on mobile for better UX
+          const firstInput = modal.querySelector('input[type="text"], input[type="email"]');
+          if (firstInput && window.innerWidth < 768) {
+            setTimeout(() => {
+              firstInput.focus();
+            }, 300);
+          }
+        });
+      }
+
+      // Enhanced search functionality for better mobile experience
+      let searchTimeout;
+      document.getElementById("searchInput").addEventListener("input", function () {
+        clearTimeout(searchTimeout);
+        let value = this.value.trim();
+
+        // Add loading state
+        this.style.opacity = '0.7';
+
+        searchTimeout = setTimeout(() => {
+          let url = new URL(window.location.href);
+
+          if (value) {
+            url.searchParams.set("search", value);
+          } else {
+            url.searchParams.delete("search");
+          }
+
+          window.location.href = url;
+        }, 500); // Debounce for 500ms
+      });
+
+      // Navigation active state management
+      function setActiveNavItem() {
+        const currentPath = window.location.pathname;
+        const navLinks = document.querySelectorAll('.navbar-nav .nav-link:not(.logout-btn)');
+
+        navLinks.forEach(link => {
+          link.classList.remove('active');
+          const href = link.getAttribute('href');
+
+          if (currentPath === href ||
+            (currentPath.includes('/admin/users') && href === '/admin/users') ||
+            (currentPath.includes('/admin/requests') && href === '/admin/requests') ||
+            (currentPath === '/' && href === '/')) {
+            link.classList.add('active');
+          }
+        });
+      }
+
+      // Set active navigation on page load
+      window.addEventListener('DOMContentLoaded', setActiveNavItem);
+
+      // Close mobile menu when clicking on nav links
+      document.querySelectorAll('.navbar-nav .nav-link').forEach(link => {
+        link.addEventListener('click', function () {
+          const navbarCollapse = document.querySelector('.navbar-collapse');
+          const bsCollapse = new bootstrap.Collapse(navbarCollapse, {
+            toggle: false
+          });
+          bsCollapse.hide();
+        });
+      });
+
+      // Smooth navbar collapse animation
+      const navbarToggler = document.querySelector('.navbar-toggler');
+      const navbarCollapse = document.querySelector('.navbar-collapse');
+
+      navbarCollapse.addEventListener('show.bs.collapse', function () {
+        this.style.opacity = '0';
+        this.style.transform = 'translateY(-10px)';
+        setTimeout(() => {
+          this.style.transition = 'all 0.3s ease';
+          this.style.opacity = '1';
+          this.style.transform = 'translateY(0)';
+        }, 10);
+      });
+
+      navbarCollapse.addEventListener('hide.bs.collapse', function () {
+        this.style.transition = 'all 0.3s ease';
+        this.style.opacity = '0';
+        this.style.transform = 'translateY(-10px)';
+      });
+    </script>
+
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const editUserModal = document.getElementById("editUserModal");
+        const editForm = editUserModal.querySelector("form");
+
+        // Populate form fields when edit button is clicked
+        document.querySelectorAll(".edit-user").forEach((btn) => {
+          btn.addEventListener("click", function () {
+            document.getElementById("editUserId").value = this.dataset.id;
+            document.getElementById("editName").value = this.dataset.name;
+            document.getElementById("editEmail").value = this.dataset.email;
+            document.getElementById("editPhone").value = this.dataset.phone;
+
+            // Set status checkbox (true/false)
+            const isActive = this.dataset.active === "true" || this.dataset.active === "1";
+            document.getElementById("editActive").checked = isActive;
+          });
+        });
+
+        // Validation logic
+        editForm.addEventListener("submit", async function (event) {
+          event.preventDefault();
+          event.stopPropagation();
+
+          let isValid = true;
+
+          // Name validation (letters & spaces, min 3 chars)
+          const nameInput = document.getElementById("editName");
+          const nameRegex = /^[A-Za-z\s]{3,}$/;
+          if (!nameRegex.test(nameInput.value.trim())) {
+            nameInput.classList.add("is-invalid");
+            isValid = false;
+          } else {
+            nameInput.classList.remove("is-invalid");
+            nameInput.classList.add("is-valid");
+          }
+
+          // Email validation
+          const emailInput = document.getElementById("editEmail");
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          if (!emailRegex.test(emailInput.value.trim())) {
+            emailInput.classList.add("is-invalid");
+            isValid = false;
+          } else {
+            emailInput.classList.remove("is-invalid");
+            emailInput.classList.add("is-valid");
+          }
+
+          // Phone validation (optional field but must be valid if entered)
+          const phoneInput = document.getElementById("editPhone");
+          const phoneFeedback = phoneInput.nextElementSibling; // <div class="invalid-feedback">
+          const phoneRegex = /^\d{10}$/;
+
+          if (phoneInput.value.trim() !== "" && !phoneRegex.test(phoneInput.value.trim())) {
+            phoneInput.classList.add("is-invalid");
+            if (phoneFeedback) {
+              phoneFeedback.textContent = "Phone number must be exactly 10 digits.";
+            }
+            isValid = false;
+          } else {
+            phoneInput.classList.remove("is-invalid");
+            if (phoneInput.value.trim() !== "") {
+              phoneInput.classList.add("is-valid");
+            }
+          }
+
+          // If valid, proceed with submission
+          if (isValid) {
+            const formData = {
+              userId: document.getElementById("editUserId").value,
+              name: nameInput.value,
+              email: emailInput.value,
+              phone: phoneInput.value,
+              isActive: document.getElementById("editActive").checked
+            }
+            try {
+              const response = await fetch(`/admin/edit/user`, {
+                method: 'PUT',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+              });
+              const result = await response.json();
+              if (result.ok) {
+                showToast("success")
+                const modal = bootstrap.Modal.getInstance(document.getElementById('editUserModal'));
+                modal.hide();
+                setTimeout(() => {
+                  window.location.reload()
+                }, 4000)
+              } else {
+                showToast(result.type, result.title, result.message)
+              }
+            } catch (error) {
+              await Swal.fire({
+                icon: "error",
+                title: "Something went wrong",
+                text: "Please try again later."
+              });
+            }
+          }
+        });
+      });
+    </script>
+    <script>
+      let toastCounter = 0;
+
+      function showToast(type = 'success', title = 'Updated', message = 'Client Details Updated Successfully!') {
+        const toastId = `toast-${++toastCounter}`;
+        const icons = {
+          success: '✓',
+          error: '✕',
+          warning: '⚠',
+          info: 'i'
+        };
+
+        const toastHTML = `
+        <div id="${toastId}" class="toast ${type}">
+          <div class="toast-icon">${icons[type]}</div>
+          <div class="toast-content">
+            <div class="toast-title">${title}</div>
+            <p class="toast-message">${message}</p>
+          </div>
+          <button class="toast-close" onclick="hideToast('${toastId}')">&times;</button>
+          <div class="toast-progress" id="${toastId}-progress"></div>
+        </div>
+      `;
+
+        const container = document.getElementById('toastContainer');
+        container.insertAdjacentHTML('beforeend', toastHTML);
+
+        const toast = document.getElementById(toastId);
+        const progressBar = document.getElementById(`${toastId}-progress`);
+
+        // Trigger show animation
+        setTimeout(() => {
+          toast.classList.add('show');
+        }, 10);
+
+        // Start progress bar animation
+        let progress = 100;
+        progressBar.style.width = progress + '%';
+
+        const interval = setInterval(() => {
+          progress -= 0.5;
+          progressBar.style.width = progress + '%';
+
+          if (progress <= 0) {
+            clearInterval(interval);
+            hideToast(toastId);
+          }
+        }, 25); // 5000ms / 200 steps = 25ms per step
+
+        // Store interval for cleanup if manually closed
+        toast.dataset.interval = interval;
+      }
+
+      function hideToast(toastId) {
+        const toast = document.getElementById(toastId);
+        if (toast) {
+          // Clear the progress interval
+          if (toast.dataset.interval) {
+            clearInterval(toast.dataset.interval);
+          }
+
+          toast.classList.add('hide');
+          toast.classList.remove('show');
+
+          setTimeout(() => {
+            toast.remove();
+          }, 400);
+        }
+      }
+    </script>
+
+    <!-- Client-side validation -->
+    <script>
+      document.getElementById('userForm').addEventListener('submit', async function (event) {
+        event.preventDefault(); // Stop normal form submission
+
+        let form = event.target;
+
+        // Trim inputs
+        form.name.value = form.name.value.trim();
+        form.email.value = form.email.value.trim();
+        form.phone.value = form.phone.value.trim();
+
+        // Validate Name
+        let nameRegex = /^[A-Za-z ]+$/;
+        if (!nameRegex.test(form.name.value)) {
+          form.name.setCustomValidity("Invalid");
+        } else {
+          form.name.setCustomValidity("");
+        }
+
+        // Validate Phone
+        let phoneRegex = /^\d{10}$/;
+        if (form.phone.value && !phoneRegex.test(form.phone.value)) {
+          form.phone.setCustomValidity("Invalid");
+        } else {
+          form.phone.setCustomValidity("");
+        }
+
+        // Validate Password (min 8 chars)
+        if (form.password.value.length < 8) {
+          form.password.setCustomValidity("Invalid");
+        } else {
+          form.password.setCustomValidity("");
+        }
+
+        if (!form.checkValidity()) {
+          form.classList.add('was-validated');
+          return;
+        }
+
+      
+        let formData = {
+          name: form.name.value,
+          email: form.email.value,
+          phone: form.phone.value,
+          password: form.password.value,
+          status: form.status.value
+        };
+
+        try {
+          let res = await fetch('/addclient', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(formData)
+          });
+
+          let result = await res.json();
+          if (result.ok) {
+            showToast("success")
+            const userModal = document.getElementById('userModal');
+            const modal = bootstrap.Modal.getInstance(userModal) || new bootstrap.Modal(userModal);
+            modal.hide();
+            
+            setTimeout(() => {
+              window.location.reload()
+            }, 4000)
+
+          } else {
+            showToast(result.type, result.title, result.message)
+          }
+
+        } catch (err) {
+          await Swal.fire({
+            icon: "error",
+            title: "Something went wrong",
+            text: "Please try again later."
+          });
+        }
+      });
+    </script>
+</body>
+</html>

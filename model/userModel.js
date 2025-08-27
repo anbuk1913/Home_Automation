@@ -5,24 +5,38 @@ const userSchema = new mongoose.Schema(
     name: {
       type: String,
       required: true,
+      trim: true,
     },
     email: {
       type: String,
       required: true,
+      unique: true,
+      lowercase: true,
+      trim: true,
     },
     phone: {
       type: Number,
-      required: true,
+      required: false,
+      trim: true,
     },
     password: {
       type: String,
-      required: true,
+      required: false,
     },
     isActive: {
       type: Boolean,
-      require: true,
+      required: true,
       default: true,
     },
+    request: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
+    picture: {
+      type: String,
+      required: false,
+    }
   },
   {
     timestamps: true,

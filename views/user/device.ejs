@@ -1,0 +1,1332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Home Dashboard</title>
+    <link rel="icon" href="/images/logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        :root {
+            --primary-green: #8cbf3a;
+            --secondary-dark: #1a1d23;
+            --tertiary-dark: #2a2d35;
+            --text-light: #e5e7eb;
+            --text-muted: #9ca3af;
+            --border-dark: #374151;
+            --hover-dark: #374151;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Quicksand', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--secondary-dark) 0%, #0f1419 100%);
+            color: var(--text-light);
+            min-height: 100vh;
+        }
+
+        /* Navbar */
+        nav {
+            background: var(--tertiary-dark);
+            color: var(--text-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid var(--border-dark);
+        }
+
+        nav .logo {
+            cursor: pointer;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-green);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 1.5rem;
+            transition: all 0.3s ease;
+            margin: 0;
+        }
+
+        nav ul li a {
+            color: var(--text-light);
+            text-decoration: none;
+            transition: color 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            font-weight: 500;
+        }
+
+        nav ul li a:hover {
+            color: var(--primary-green);
+            background: rgba(140, 191, 58, 0.1);
+        }
+
+        nav ul li a.active {
+            color: var(--primary-green);
+            background: rgba(140, 191, 58, 0.2);
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .user-profile:hover {
+            background: var(--hover-dark);
+        }
+
+        .user-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            border: 2px solid var(--primary-green);
+            object-fit: cover;
+            background: var(--tertiary-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-green);
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name {
+            color: var(--text-light);
+            font-weight: 600;
+            font-size: 0.9rem;
+            line-height: 1.2;
+        }
+
+        .user-role {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            line-height: 1.2;
+        }
+
+        .profile-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: var(--secondary-dark);
+            border: 1px solid var(--border-dark);
+            border-radius: 8px;
+            padding: 0.5rem 0;
+            min-width: 180px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 1001;
+        }
+
+        .user-profile.active .profile-dropdown {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .profile-dropdown a {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            padding: 0.7rem 1rem;
+            color: var(--text-light);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .profile-dropdown a:hover {
+            background: var(--tertiary-dark);
+            color: var(--primary-green);
+        }
+
+        .profile-dropdown a i {
+            width: 16px;
+            color: var(--text-muted);
+        }
+
+        .profile-dropdown a:hover i {
+            color: var(--primary-green);
+        }
+
+        .profile-dropdown .divider {
+            height: 1px;
+            background: var(--border-dark);
+            margin: 0.5rem 0;
+        }
+
+        .request-device-btn {
+            background: var(--primary-green);
+            color: var(--secondary-dark);
+            border: none;
+            padding: 0.7rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .request-device-btn:hover {
+            background: #7ba832;
+            transform: translateY(-1px);
+        }
+
+ 
+        .request-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(140, 191, 58, 0.4);
+        }
+        
+
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 3px;
+            transition: all 0.3s ease;
+        }
+
+        .menu-toggle:hover {
+            background: var(--hover-dark);
+        }
+
+        .menu-toggle span {
+            width: 25px;
+            height: 3px;
+            background: var(--text-light);
+            margin: 3px 0;
+            transition: 0.3s;
+            border-radius: 2px;
+        }
+
+        .menu-toggle.active span:nth-child(1) {
+            transform: rotate(-45deg) translate(-5px, 6px);
+        }
+
+        .menu-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .menu-toggle.active span:nth-child(3) {
+            transform: rotate(45deg) translate(-5px, -6px);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px 0;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-green);
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        /* Room Grid */
+        .rooms-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .room-card {
+            background: var(--tertiary-dark);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid var(--border-dark);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .room-card:hover {
+            transform: translateY(-5px);
+            background: var(--hover-dark);
+            border-color: var(--primary-green);
+            box-shadow: 0 10px 25px rgba(140, 191, 58, 0.1);
+        }
+
+        .room-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--primary-green);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .room-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .room-icon {
+            font-size: 3rem;
+            color: var(--primary-green);
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .room-info h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: var(--text-light);
+        }
+
+        .room-info p {
+            color: var(--text-muted);
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+        }
+
+        .room-stats {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .stat-item i {
+            color: var(--primary-green);
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--primary-green);
+            animation: pulse 2s infinite;
+        }
+
+        .status-offline {
+            background: #ef4444;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Room Detail Page */
+        .room-detail {
+            display: none;
+        }
+
+        .room-detail.active {
+            display: block;
+        }
+
+        .back-button {
+            background: var(--tertiary-dark);
+            border: 1px solid var(--border-dark);
+            color: var(--text-light);
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .back-button:hover {
+            background: var(--hover-dark);
+            border-color: var(--primary-green);
+        }
+
+        .room-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .room-header .room-icon {
+            margin-bottom: 0;
+            font-size: 4rem;
+        }
+
+        .room-title h2 {
+            font-size: 2.2rem;
+            margin-bottom: 5px;
+        }
+
+        .room-title .status {
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Switches Grid */
+        .switches-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .switch-card {
+            background: var(--tertiary-dark);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid var(--border-dark);
+            transition: all 0.3s ease;
+        }
+
+        .switch-card:hover {
+            border-color: var(--primary-green);
+            transform: translateY(-2px);
+        }
+
+        .switch-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .switch-info h4 {
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+
+        .switch-info p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .switch-toggle {
+            position: relative;
+            width: 60px;
+            height: 30px;
+            background: var(--border-dark);
+            border-radius: 15px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .switch-toggle.active {
+            background: var(--primary-green);
+        }
+
+        .switch-toggle::after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+        }
+
+        .switch-toggle.active::after {
+            transform: translateX(30px);
+        }
+
+        .switch-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .switch-icon {
+            font-size: 1.5rem;
+            color: var(--primary-green);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-muted);
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            color: var(--border-dark);
+        }
+
+        .empty-state h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: var(--text-light);
+        }
+
+        /* Loading state */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-muted);
+        }
+
+        .loading i {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Mobile Navigation */
+        @media (max-width: 768px) {
+            nav {
+                padding: 1rem;
+                position: relative;
+            }
+
+            nav ul {
+                display: none;
+                flex-direction: column;
+                background: var(--secondary-dark);
+                position: absolute;
+                top: 70px;
+                right: 20px;
+                width: 220px;
+                border-radius: 8px;
+                padding: 1rem;
+                opacity: 0;
+                transform: translateY(-10px);
+                transition: all 0.3s ease-in-out;
+                border: 1px solid var(--border-dark);
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            }
+
+            nav ul.active {
+                display: flex;
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            nav ul li {
+                margin: 0;
+            }
+
+            nav ul li a {
+                color: var(--text-light);
+                padding: 0.7rem 1rem;
+                display: block;
+                border-radius: 5px;
+            }
+
+            .menu-toggle {
+                display: flex;
+            }
+
+            .nav-actions {
+                gap: 0.5rem;
+            }
+
+            .request-device-btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.8rem;
+            }
+
+            .request-device-btn span {
+                display: none;
+            }
+
+            .user-info {
+                display: none;
+            }
+
+            .user-avatar {
+                width: 30px;
+                height: 30px;
+                font-size: 1rem;
+            }
+
+            .profile-dropdown {
+                right: -10px;
+                min-width: 160px;
+            }
+
+            .container {
+                padding: 15px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .rooms-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .room-card {
+                padding: 20px;
+            }
+
+            .room-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .switches-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .room-stats {
+                justify-content: flex-start;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+
+            .room-card {
+                padding: 15px;
+            }
+
+            .switch-card {
+                padding: 15px;
+            }
+
+            .room-header .room-icon {
+                font-size: 3rem;
+            }
+        }
+
+        /* CSS For Req Button & Req Model */
+        /* Modal Overlay */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Modal Content */
+        .modal {
+            background: var(--tertiary-dark);
+            border: 1px solid var(--border-dark);
+            border-radius: 16px;
+            padding: 2rem;
+            max-width: 400px;
+            width: 100%;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            transform: scale(0.7) translateY(50px);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .modal-overlay.active .modal {
+            transform: scale(1) translateY(0);
+        }
+
+        .modal-icon {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, var(--primary-green), #9ecf47);
+            border-radius: 50%;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 20px rgba(140, 191, 58, 0.3);
+        }
+
+        .modal-icon svg {
+            width: 32px;
+            height: 32px;
+            stroke: white;
+            stroke-width: 2;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--text-light);
+        }
+
+        .modal-message {
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .modal-button {
+            flex: 1;
+            min-width: 120px;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-yes {
+            background: linear-gradient(135deg, var(--primary-green), #9ecf47);
+            color: white;
+            box-shadow: 0 4px 12px rgba(140, 191, 58, 0.3);
+        }
+
+        .btn-yes:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(140, 191, 58, 0.4);
+        }
+
+        .btn-no {
+            background: transparent;
+            color: var(--text-muted);
+            border: 1px solid var(--border-dark);
+        }
+
+        .btn-no:hover {
+            background: var(--hover-dark);
+            color: var(--text-light);
+        }
+
+        /* Success/Error Messages */
+        .message {
+            margin-top: 2rem;
+            padding: 1rem;
+            border-radius: 8px;
+            font-weight: 500;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+        }
+
+        .message.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .message.success {
+            background: rgba(140, 191, 58, 0.1);
+            border: 1px solid rgba(140, 191, 58, 0.3);
+            color: var(--primary-green);
+        }
+
+        .message.error {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 480px) {
+            .modal {
+                padding: 1.5rem;
+                margin: 20px;
+            }
+
+            .modal-buttons {
+                flex-direction: column;
+            }
+
+            .modal-button {
+                min-width: auto;
+            }
+
+            .request-button {
+                padding: 10px 20px;
+                font-size: 0.8rem;
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav>
+        <div class="logo">
+            Imbed Software
+        </div>
+        
+        <ul id="nav-links">
+            <li><a href="/">Home</a></li>
+            <li><a href="/#about">About</a></li>
+            <li><a href="/devices" class="active">Devices</a></li>
+            <li><a href="/#services">Services</a></li>
+            <li><a href="/#contact">Contact</a></li>
+        </ul>
+
+        <div class="nav-actions">
+            <% if(user.request){ %>
+                <button class="request-device-btn" >
+                    Request Pending
+                </button>
+            <% } else { %>
+                <button class="request-device-btn request-button" id="requestBtn">
+                    <i class="fas fa-plus"></i>
+                    Request
+                </button>
+            <% } %>
+            <div class="user-profile" onclick="toggleProfileDropdown()">
+                <div class="user-avatar">
+                    <% if (typeof user !== 'undefined' && user.picture) { %>
+                        <img src="<%= user.picture %>" alt="<%= user.name %>">
+                    <% } else { %>
+                        <% if (typeof user !== 'undefined' && user.name) { %>
+                            <%= user.name.charAt(0).toUpperCase() %>
+                        <% } else { %>
+                            U
+                        <% } %>
+                    <% } %>
+                </div>
+                <div class="user-info">
+                    <div class="user-name">
+                        <%= typeof user !== 'undefined' && user.name ? user.name : 'User' %>
+                    </div>
+                </div>
+                <i class="fas fa-chevron-down" style="color: var(--text-muted); font-size: 0.8rem; transition: transform 0.3s ease;"></i>
+                
+                <div class="profile-dropdown">
+                    <a href="/profile">
+                        <i class="fas fa-user"></i>
+                        My Profile
+                    </a>
+                    <a href="/settings">
+                        <i class="fas fa-cog"></i>
+                        Settings
+                    </a>
+                    <a href="/notifications">
+                        <i class="fas fa-bell"></i>
+                        Notifications
+                    </a>
+                    <div class="divider"></div>
+                    <a href="/help">
+                        <i class="fas fa-question-circle"></i>
+                        Help & Support
+                    </a>
+                    <a href="/logout" onclick="return confirm('Are you sure you want to logout?')">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Logout
+                    </a>
+                </div>
+            </div>
+            
+            <div class="menu-toggle" onclick="toggleMobileMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+    <!-- Main Dashboard View -->
+    <div id="dashboard-view" class="container">
+        <div class="header">
+            <div class="message" id="message" style="display: inline;"></div>
+            <h1><i class="fas fa-home"></i> Smart Home Dashboard</h1>
+            <p>Control your connected devices from anywhere</p>
+        </div>
+        <div class="rooms-grid">
+            <% if (typeof rooms !== 'undefined' && rooms.length > 0) { %>
+                <% rooms.forEach(function(room) { %>
+                    <div class="room-card" onclick="showRoomDetail('<%= room._id %>', '<%= room.name %>')">
+                        <i class="<%= getRoomIcon(room.name) %> room-icon"></i>
+                        <div class="room-info">
+                            <h3><%= room.name %></h3>
+                            <p>Smart room with connected devices</p>
+                            <div class="room-stats">
+                                <div class="stat-item">
+                                    <i class="fas fa-plug"></i>
+                                    <span><%= room.pins ? room.pins.length : 0 %> devices</span>
+                                </div>
+                                <div class="stat-item">
+                                    <i class="fas fa-power-off"></i>
+                                    <span><%= room.pins ? room.pins.filter(pin => pin.state).length : 0 %> active</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="status-indicator"></span>
+                                    <span>online</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <% }); %>
+            <% } else { %>
+                <div class="empty-state">
+                    <i class="fas fa-home"></i>
+                    <h3>No Rooms Found</h3>
+                    <p>Add some rooms to get started with your smart home automation</p>
+                </div>
+            <% } %>
+        </div>
+    </div>
+
+    <!-- Room Detail View -->
+    <div id="room-detail-view" class="container room-detail">
+        <button class="back-button" onclick="showDashboard()">
+            <i class="fas fa-arrow-left"></i>
+            Back to Dashboard
+        </button>
+
+        <div class="room-header">
+            <i id="room-detail-icon" class="fas fa-home room-icon"></i>
+            <div class="room-title">
+                <h2 id="room-detail-name">Room Name</h2>
+                <div class="status">
+                    <span class="status-indicator"></span>
+                    <span>Online</span>
+                    <span>•</span>
+                    <span id="device-count">0 devices</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="switches-container" class="switches-grid">
+            <div class="loading">
+                <i class="fas fa-spinner"></i>
+                <p>Loading devices...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Request Modal -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <div class="modal-icon">
+                <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <h2 class="modal-title">Confirm Request</h2>
+            <p class="modal-message">Are you sure you want to request a new device?</p>
+            <div class="modal-buttons">
+                <button class="modal-button btn-no" id="noBtn">No, Cancel</button>
+                <button class="modal-button btn-yes" id="yesBtn">Yes, Request</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Function to get room icon based on room name
+        function getRoomIcon(roomName) {
+            const name = roomName.toLowerCase();
+            if (name.includes('living') || name.includes('hall')) return 'fas fa-couch';
+            if (name.includes('bedroom') || name.includes('bed')) return 'fas fa-bed';
+            if (name.includes('kitchen')) return 'fas fa-utensils';
+            if (name.includes('bathroom') || name.includes('bath')) return 'fas fa-bath';
+            if (name.includes('office') || name.includes('study')) return 'fas fa-laptop';
+            if (name.includes('garage')) return 'fas fa-car';
+            if (name.includes('garden') || name.includes('outdoor')) return 'fas fa-tree';
+            return 'fas fa-door-open';
+        }
+
+        // Function to get pin icon based on pin name
+        function getPinIcon(pinName) {
+            const name = pinName.toLowerCase();
+            if (name.includes('light') || name.includes('lamp') || name.includes('bulb')) return 'fas fa-lightbulb';
+            if (name.includes('fan')) return 'fas fa-fan';
+            if (name.includes('ac') || name.includes('air') || name.includes('cool')) return 'fas fa-snowflake';
+            if (name.includes('tv') || name.includes('television')) return 'fas fa-tv';
+            if (name.includes('heater') || name.includes('heat')) return 'fas fa-fire';
+            if (name.includes('speaker') || name.includes('music')) return 'fas fa-volume-up';
+            if (name.includes('camera')) return 'fas fa-video';
+            if (name.includes('door') || name.includes('lock')) return 'fas fa-door-closed';
+            if (name.includes('window')) return 'fas fa-window-maximize';
+            if (name.includes('switch')) return 'fas fa-toggle-on';
+            return 'fas fa-plug';
+        }
+
+        function showRoomDetail(roomId, roomName) {
+            document.getElementById('dashboard-view').style.display = 'none';
+            document.getElementById('room-detail-view').style.display = 'block';
+            
+            // Update room header
+            document.getElementById('room-detail-icon').className = getRoomIcon(roomName) + ' room-icon';
+            document.getElementById('room-detail-name').textContent = roomName;
+            
+            // Load pins for this room
+            loadRoomPins(roomId);
+        }
+
+        function showDashboard() {
+            document.getElementById('dashboard-view').style.display = 'block';
+            document.getElementById('room-detail-view').style.display = 'none';
+        }
+
+        async function loadRoomPins(roomId) {
+            const switchesContainer = document.getElementById('switches-container');
+            
+            // Show loading state
+            switchesContainer.innerHTML = `
+                <div class="loading">
+                    <i class="fas fa-spinner"></i>
+                    <p>Loading devices...</p>
+                </div>
+            `;
+
+            try {
+                // Fetch pins for this room from your backend
+                const response = await fetch(`/api/room/${roomId}/pins`);
+                
+                if (!response.ok) {
+                    throw new Error('Failed to fetch pins');
+                }
+                
+                const pins = await response.json();
+                
+                if (pins.length === 0) {
+                    switchesContainer.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-plug"></i>
+                            <h3>No Devices Found</h3>
+                            <p>Add some devices to control them from here</p>
+                        </div>
+                    `;
+                } else {
+                    // Update device count
+                    document.getElementById('device-count').textContent = `${pins.length} devices`;
+                    
+                    // Render pins
+                    switchesContainer.innerHTML = pins.map(pin => `
+                        <div class="switch-card">
+                            <div class="switch-header">
+                                <div class="switch-info">
+                                    <h4>${pin.name}</h4>
+                                    <p>Smart Device</p>
+                                </div>
+                                <div class="switch-toggle ${pin.state ? 'active' : ''}" 
+                                     onclick="togglePin('${pin._id}', this)"></div>
+                            </div>
+                            <div class="switch-details">
+                                <i class="${getPinIcon(pin.name)} switch-icon"></i>
+                                <span class="stat-item">
+                                    <i class="fas fa-circle" style="color: ${pin.state ? 'var(--primary-green)' : '#ef4444'}"></i>
+                                    ${pin.state ? 'On' : 'Off'}
+                                </span>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Error loading pins:', error);
+                switchesContainer.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-exclamation-triangle" style="color: #ef4444;"></i>
+                        <h3>Error Loading Devices</h3>
+                        <p>Failed to load devices. Please try again.</p>
+                    </div>
+                `;
+            }
+        }
+
+        async function togglePin(pinId, element) {
+            const currentState = element.classList.contains('active');
+            const newState = !currentState;
+            
+            try {
+                // Send toggle request to backend
+                const response = await fetch(`/api/pin/${pinId}/toggle`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ state: newState })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to toggle pin');
+                }
+
+                const result = await response.json();
+                
+                // Update UI only if backend request was successful
+                if (result.success) {
+                    element.classList.toggle('active');
+                    
+                    // Update status indicator
+                    const statusIcon = element.parentElement.parentElement.querySelector('.switch-details .stat-item i');
+                    const statusText = element.parentElement.parentElement.querySelector('.switch-details .stat-item');
+                    
+                    statusIcon.style.color = newState ? 'var(--primary-green)' : '#ef4444';
+                    statusText.innerHTML = `<i class="fas fa-circle" style="color: ${newState ? 'var(--primary-green)' : '#ef4444'}"></i>${newState ? 'On' : 'Off'}`;
+                }
+            } catch (error) {
+                await Swal.fire({
+                    icon: "error",
+                    title: "Something went wrong",
+                    text: "Failed to toggle device. Please try again."
+                });
+            }
+        }
+
+        // Profile dropdown toggle function
+        function toggleProfileDropdown() {
+            const userProfile = document.querySelector('.user-profile');
+            const chevron = userProfile.querySelector('.fa-chevron-down');
+            
+            userProfile.classList.toggle('active');
+            
+            // Rotate chevron icon
+            if (userProfile.classList.contains('active')) {
+                chevron.style.transform = 'rotate(180deg)';
+            } else {
+                chevron.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        // Mobile menu toggle function
+        function toggleMobileMenu() {
+            const navLinks = document.getElementById('nav-links');
+            const menuToggle = document.querySelector('.menu-toggle');
+            
+            navLinks.classList.toggle('active');
+            menuToggle.classList.toggle('active');
+        }
+
+        // Close mobile menu and profile dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const nav = document.querySelector('nav');
+            const navLinks = document.getElementById('nav-links');
+            const menuToggle = document.querySelector('.menu-toggle');
+            const userProfile = document.querySelector('.user-profile');
+            const chevron = userProfile.querySelector('.fa-chevron-down');
+            
+            // Close mobile menu
+            if (!nav.contains(event.target) && navLinks.classList.contains('active')) {
+                navLinks.classList.remove('active');
+                menuToggle.classList.remove('active');
+            }
+            
+            // Close profile dropdown
+            if (!userProfile.contains(event.target) && userProfile.classList.contains('active')) {
+                userProfile.classList.remove('active');
+                chevron.style.transform = 'rotate(0deg)';
+            }
+        });
+
+        // Update active nav link
+        function setActiveNavLink(href) {
+            const navLinks = document.querySelectorAll('#nav-links a');
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === href) {
+                    link.classList.add('active');
+                }
+            });
+        }
+
+        // EJS helper function for server-side rendering
+        
+        function getRoomIcon(roomName) {
+            const name = roomName.toLowerCase();
+            if (name.includes('living') || name.includes('hall')) return 'fas fa-couch';
+            if (name.includes('bedroom') || name.includes('bed')) return 'fas fa-bed';
+            if (name.includes('kitchen')) return 'fas fa-utensils';
+            if (name.includes('bathroom') || name.includes('bath')) return 'fas fa-bath';
+            if (name.includes('office') || name.includes('study')) return 'fas fa-laptop';
+            if (name.includes('garage')) return 'fas fa-car';
+            if (name.includes('garden') || name.includes('outdoor')) return 'fas fa-tree';
+            return 'fas fa-door-open';
+        }
+    
+    </script>
+
+    <script>
+        // Request Model Script
+        // DOM Elements
+        const requestBtn = document.getElementById('requestBtn');
+        const modalOverlay = document.getElementById('modalOverlay');
+        const yesBtn = document.getElementById('yesBtn');
+        const noBtn = document.getElementById('noBtn');
+        const message = document.getElementById('message');
+
+        // Show modal
+        function showModal() {
+            modalOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Hide modal
+        function hideModal() {
+            modalOverlay.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Show message
+        function showMessage(text, type = 'success') {
+            message.textContent = text;
+            message.className = `message ${type}`;
+            message.classList.add('show');
+            
+            setTimeout(() => {
+                message.classList.remove('show');
+            }, 4000);
+        }
+
+        // Handle request confirmation
+        async function handleRequest() {
+            hideModal();
+            
+            // Simulate API call
+            requestBtn.disabled = true;
+            requestBtn.textContent = 'Processing...';
+            
+            try {
+                let res = await fetch('/request-board',{
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                })
+                let result = await res.json();
+                console.log(result)
+                if(result.success){
+                    showMessage('Device request submitted successfully! You will receive a confirmation email shortly.', 'success');
+                    requestBtn.disabled = true;
+                    requestBtn.textContent = 'Request Pending';
+                } else {
+                    showMessage('Something went wrong! Try Again Later.', 'error');
+                    requestBtn.disabled = false;
+                    requestBtn.textContent = 'Request';
+                }
+            } catch (error) {
+                await Swal.fire({
+                    icon: "error",
+                    title: "Something went wrong",
+                    text: "Please try again later."
+                });
+            }
+        }
+
+        // Handle request cancellation
+        function handleCancel() {
+            hideModal();
+            showMessage('Request cancelled. No action was taken.', 'error');
+        }
+
+        // Event listeners
+        requestBtn.addEventListener('click', showModal);
+        yesBtn.addEventListener('click', handleRequest);
+        noBtn.addEventListener('click', handleCancel);
+
+        // Close modal when clicking overlay
+        modalOverlay.addEventListener('click', (e) => {
+            if (e.target === modalOverlay) {
+                hideModal();
+            }
+        });
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && modalOverlay.classList.contains('active')) {
+                hideModal();
+            }
+        });
+
+        // Prevent modal close when clicking inside the modal
+        document.querySelector('.modal').addEventListener('click', (e) => {
+            e.stopPropagation();
+        });
+    </script>
+</body>
+</html>

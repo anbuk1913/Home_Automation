@@ -1,0 +1,1573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Requests</title>
+    <link rel="icon" href="/images/logo.png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-green: #8cbf3a;
+            --secondary-gray: #374151;
+            --bg-dark: #1a1a1a;
+            --bg-card: #262626;
+            --bg-darker: #0f0f0f;
+            --light-green: #a5d155;
+            --dark-green: #75a832;
+            --light-gray: #9ca3af;
+            --dark-gray: #1f2937;
+            --border-dark: #404040;
+            --text-light: #e5e7eb;
+            --text-gray: #9ca3af;
+            --text-dark: #374151;
+            --shadow-green: rgba(140, 191, 58, 0.15);
+            --shadow-medium: rgba(140, 191, 58, 0.25);
+            --shadow-heavy: rgba(0, 0, 0, 0.3);
+            --hover-bg: #333333;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-light);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .dashboard-container {
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-darker) 100%);
+        }
+
+        .top-bar {
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border-dark);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary-green), var(--light-green));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-light);
+        }
+
+        .admin-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-gray);
+        }
+
+        .main-content {
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .page-header {
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary-green), var(--light-green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-subtitle {
+            color: var(--text-gray);
+            font-size: 1.1rem;
+            font-weight: 400;
+        }
+
+        .controls-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border-dark);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 32px var(--shadow-heavy);
+        }
+
+        .search-container {
+            position: relative;
+            margin-bottom: 1rem;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 1rem 1rem 1rem 3rem;
+            background: var(--bg-darker);
+            border: 2px solid var(--border-dark);
+            border-radius: 12px;
+            color: var(--text-light);
+            font-size: 1rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-green);
+            box-shadow: 0 0 0 4px var(--shadow-green);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-gray);
+            font-size: 1.1rem;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.95rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-green), var(--light-green));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px var(--shadow-medium);
+        }
+
+        .btn-secondary {
+            background: var(--secondary-gray);
+            color: var(--text-light);
+            border: 1px solid var(--border-dark);
+        }
+
+        .btn-secondary:hover {
+            background: var(--hover-bg);
+            border-color: var(--primary-green);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-dark);
+            border-radius: 16px;
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 32px var(--shadow-heavy);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary-green), var(--light-green));
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--primary-green), var(--light-green));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--text-light);
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            color: var(--text-gray);
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .users-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border-dark);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px var(--shadow-heavy);
+            margin-bottom: 2rem;
+        }
+
+        .section-header {
+            background: var(--bg-darker);
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-dark);
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-green);
+            margin-bottom: 0.25rem;
+        }
+
+        .section-subtitle {
+            color: var(--text-gray);
+            font-size: 0.9rem;
+        }
+
+        .users-grid {
+            padding: 1.5rem;
+        }
+
+        .user-card {
+            background: var(--bg-darker);
+            border: 1px solid var(--border-dark);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .user-card:hover {
+            transform: translateX(4px);
+            border-color: var(--primary-green);
+            box-shadow: 0 8px 25px var(--shadow-green);
+        }
+
+        .user-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: linear-gradient(180deg, var(--primary-green), var(--light-green));
+            transform: scaleY(0);
+            transition: transform 0.3s ease;
+        }
+
+        .user-card:hover::before {
+            transform: scaleY(1);
+        }
+
+        .user-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-avatar {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-green), var(--light-green));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1.5rem;
+            border: 3px solid var(--bg-card);
+            box-shadow: 0 4px 12px var(--shadow-green);
+        }
+
+        .user-details h3 {
+            color: var(--text-light);
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .user-details p {
+            color: var(--text-gray);
+            font-size: 0.9rem;
+        }
+
+        .user-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(251, 191, 36, 0.1);
+            color: #fbbf24;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: 1px solid rgba(251, 191, 36, 0.3);
+        }
+
+        .user-meta {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .meta-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .meta-label {
+            color: var(--text-gray);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.25rem;
+        }
+
+        .meta-value {
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        .user-actions {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+        }
+
+        .btn-info {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+        }
+
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.85rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            color: var(--border-dark);
+            margin-bottom: 1rem;
+        }
+
+        .empty-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-description {
+            color: var(--text-gray);
+            font-size: 1rem;
+        }
+
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .pagination {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border-dark);
+            border-radius: 12px;
+            padding: 0.75rem;
+        }
+
+        .pagination .btn {
+            padding: 0.5rem 0.75rem;
+            min-width: 40px;
+            justify-content: center;
+        }
+
+        .pagination .btn.active {
+            background: linear-gradient(135deg, var(--primary-green), var(--light-green));
+            color: white;
+        }
+
+        .pagination-info {
+            color: var(--text-gray);
+            font-size: 0.9rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border-dark);
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .top-bar {
+                padding: 1rem;
+            }
+
+            .main-content {
+                padding: 1rem;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .user-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .user-info {
+                width: 100%;
+            }
+
+            .user-meta {
+                grid-template-columns: 1fr;
+            }
+
+            .user-actions {
+                justify-content: stretch;
+            }
+
+            .user-actions .btn {
+                flex: 1;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .pagination {
+                flex-wrap: wrap;
+                gap: 0.25rem;
+            }
+
+            .pagination-container {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+        }
+
+        .loading {
+            opacity: 0.7;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .loading .user-card {
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        /* Navigation Styles */
+        .navbar-custom {
+        background: linear-gradient(135deg, var(--bg-darker), var(--bg-dark));
+        box-shadow: 0 4px 20px var(--shadow-heavy);
+        padding: 1rem 0;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        border-bottom: 1px solid var(--border-dark);
+        }
+
+        .navbar-brand {
+        color: var(--text-light) !important;
+        font-weight: 700;
+        font-size: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        }
+
+        .navbar-brand:hover {
+        color: var(--primary-green) !important;
+        transform: scale(1.05);
+        transition: all 0.3s ease;
+        }
+
+        .navbar-nav .nav-link {
+        color: var(--text-light) !important;
+        font-weight: 500;
+        padding: 0.75rem 1.25rem !important;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        position: relative;
+        margin: 0 0.25rem;
+        }
+
+        .navbar-nav .nav-link:hover {
+        color: var(--primary-green) !important;
+        background: rgba(140, 191, 58, 0.15);
+        transform: translateY(-2px);
+        }
+
+        .navbar-nav .nav-link.active {
+        color: var(--primary-green) !important;
+        background: rgba(140, 191, 58, 0.2);
+        font-weight: 600;
+        }
+
+        .navbar-nav .nav-link.active::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 30px;
+        height: 3px;
+        background: var(--primary-green);
+        border-radius: 2px;
+        }
+
+        .navbar-toggler {
+        border: 2px solid var(--primary-green);
+        border-radius: 8px;
+        padding: 0.5rem;
+        }
+
+        .navbar-toggler:focus {
+        box-shadow: 0 0 0 3px var(--shadow-green);
+        }
+
+        .navbar-toggler-icon {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='%238cbf3a' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+        }
+
+        .logout-btn {
+        background: linear-gradient(135deg, #ef4444, #f87171);
+        border: none;
+        color: white !important;
+        padding: 0.75rem 1.25rem !important;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 3px 10px rgba(239, 68, 68, 0.3);
+        }
+
+        .logout-btn:hover {
+        background: linear-gradient(135deg, #dc2626, #ef4444);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(239, 68, 68, 0.4);
+        color: white !important;
+        }
+
+        /* Mobile Navigation Improvements */
+        @media (max-width: 991px) {
+        .navbar-collapse {
+            background: var(--bg-card);
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px var(--shadow-heavy);
+            border: 1px solid var(--border-dark);
+        }
+
+        .navbar-nav {
+            gap: 0.5rem;
+        }
+
+        .navbar-nav .nav-link {
+            text-align: center;
+            padding: 1rem !important;
+            border-radius: 8px;
+            margin: 0.25rem 0;
+        }
+
+        .logout-btn {
+            margin-top: 0.5rem;
+            width: 100%;
+            text-align: center;
+        }
+        }
+
+        /* Adjust main container for navbar */
+        .main-container {
+        margin-top: 1rem;
+        }
+
+        @media (min-width: 992px) {
+        .main-container {
+            margin-top: 2rem;
+        }
+        }
+
+        /* Dark theme form validation styles */
+        .form-control.is-invalid {
+        border-color: #ef4444;
+        background: var(--bg-darker);
+        color: var(--text-light);
+        }
+
+        .form-control.is-valid {
+        border-color: var(--primary-green);
+        background: var(--bg-darker);
+        color: var(--text-light);
+        }
+
+        /* Dark scrollbar */
+        ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+        background: var(--bg-darker);
+        }
+
+        ::-webkit-scrollbar-thumb {
+        background: var(--border-dark);
+        border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+        background: var(--primary-green);
+        }
+
+        .profile-img {
+            border: 3px solid var(--primary-green);
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px var(--shadow-green);
+        }
+
+            .profile-img:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px var(--shadow-medium);
+            border-color: var(--light-green);
+        }
+        
+        /* Touch-friendly improvements */
+        @media (hover: none) {
+        .profile-img:hover {
+            transform: none;
+        }
+        }
+
+        /* Modal Overlay */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Modal Container */
+        .modal {
+            background: var(--bg-card);
+            border: 1px solid var(--border-dark);
+            border-radius: 12px;
+            padding: 24px;
+            max-width: 450px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 40px var(--shadow-heavy);
+            transform: scale(0.8) translateY(20px);
+            transition: all 0.3s ease;
+            position: relative;
+            margin: 20px;
+        }
+
+        /* Tablet responsiveness */
+        @media (max-width: 768px) {
+            .modal {
+                max-width: 500px;
+                width: 95%;
+                margin: 15px;
+                padding: 20px;
+                border-radius: 10px;
+            }
+
+            .modal-title {
+                font-size: 18px;
+            }
+
+            .modal-message {
+                font-size: 15px;
+            }
+
+            .modal-actions {
+                gap: 10px;
+            }
+
+            .modal-btn {
+                padding: 12px 18px;
+                font-size: 15px;
+                min-width: 90px;
+            }
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+
+            .modal {
+                width: calc(100% - 20px);
+                max-width: none;
+                margin: 10px;
+                padding: 16px;
+                border-radius: 8px;
+                max-height: calc(100vh - 40px);
+            }
+
+            .modal-header {
+                margin-bottom: 12px;
+                flex-wrap: wrap;
+            }
+
+            .modal-icon {
+                width: 40px;
+                height: 40px;
+                margin-right: 12px;
+            }
+
+            .modal-icon svg {
+                width: 20px;
+                height: 20px;
+            }
+
+            .modal-title {
+                font-size: 16px;
+                line-height: 1.3;
+            }
+
+            .modal-message {
+                font-size: 14px;
+                line-height: 1.4;
+            }
+
+            .modal-content {
+                margin-bottom: 20px;
+            }
+
+            .modal-actions {
+                flex-direction: column-reverse;
+                gap: 8px;
+            }
+
+            .modal-btn {
+                width: 100%;
+                padding: 14px 16px;
+                font-size: 16px;
+                min-width: auto;
+                border-radius: 8px;
+            }
+
+            .modal-close {
+                top: 8px;
+                right: 8px;
+                padding: 6px;
+            }
+        }
+
+        /* Very small screens */
+        @media (max-width: 320px) {
+            .modal {
+                padding: 12px;
+                margin: 5px;
+                width: calc(100% - 10px);
+                max-height: calc(100vh - 20px);
+            }
+
+            .modal-header {
+                flex-direction: column;
+                text-align: center;
+                align-items: center;
+            }
+
+            .modal-icon {
+                margin-right: 0;
+                margin-bottom: 8px;
+            }
+
+            .modal-title {
+                font-size: 15px;
+            }
+
+            .modal-message {
+                font-size: 13px;
+                text-align: center;
+            }
+        }
+
+        /* Landscape mobile orientation */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .modal {
+                max-height: 95vh;
+                padding: 16px;
+            }
+
+            .modal-header {
+                margin-bottom: 8px;
+            }
+
+            .modal-content {
+                margin-bottom: 16px;
+            }
+
+            .modal-icon {
+                width: 36px;
+                height: 36px;
+            }
+
+            .modal-icon svg {
+                width: 18px;
+                height: 18px;
+            }
+        }
+
+        .modal-overlay.active .modal {
+            transform: scale(1) translateY(0);
+        }
+
+        /* Modal Header */
+        .modal-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .modal-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--primary-green);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 16px;
+            box-shadow: 0 4px 12px var(--shadow-green);
+        }
+
+        .modal-icon svg {
+            width: 24px;
+            height: 24px;
+            color: var(--bg-dark);
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-light);
+        }
+
+        /* Modal Content */
+        .modal-content {
+            margin-bottom: 24px;
+        }
+
+        .modal-message {
+            font-size: 16px;
+            line-height: 1.5;
+            color: var(--text-gray);
+        }
+
+        /* Modal Actions */
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        .modal-btn {
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+            min-width: 80px;
+        }
+
+        .modal-btn-cancel {
+            background: var(--secondary-gray);
+            color: var(--text-light);
+            border: 1px solid var(--border-dark);
+        }
+
+        .modal-btn-cancel:hover {
+            background: var(--hover-bg);
+        }
+
+        .modal-btn-confirm {
+            background: var(--primary-green);
+            color: var(--bg-dark);
+            box-shadow: 0 2px 6px var(--shadow-green);
+        }
+
+        .modal-btn-confirm:hover {
+            background: var(--light-green);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px var(--shadow-medium);
+        }
+
+        /* Close Button */
+        .modal-close {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: none;
+            border: none;
+            color: var(--text-gray);
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .modal-close:hover {
+            background: var(--hover-bg);
+            color: var(--text-light);
+        }
+
+        /* Animation keyframes */
+        @keyframes modalIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8) translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+    </style>
+</head>
+<body>
+    
+    <!-- Navigation Bar -->
+  <nav class="navbar navbar-expand-lg navbar-custom">
+    <div class="container">
+      <a class="navbar-brand" href="/">
+        <img src="/images/logo.png" style="width: 30px;">
+        Imbed Software
+      </a>
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/" id="homeLink">
+              <i class="fas fa-home me-2"></i>Home
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/admin/users" id="clientsLink">
+              <i class="fas fa-users me-2"></i>Clients
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="/admin/requests" id="requestsLink">
+              <i class="fas fa-file-alt me-2"></i>Requests
+            </a>
+          </li>
+        </ul>
+
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link logout-btn" href="/logout" id="logoutLink">
+              <i class="fas fa-sign-out-alt me-2"></i>Logout
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <div class="dashboard-container">
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Page Header -->
+            <div class="page-header">
+                <h1 class="page-title">Requests</h1>
+                <p class="page-subtitle">Manage pending user registration requests and approvals</p>
+            </div>
+
+            <!-- Controls Section -->
+            <div class="controls-section">
+                <form method="GET" class="search-container" id="search-container">
+                    <i class="fas fa-search search-icon"></i>
+                    <input
+                        type="text" 
+                        name="search" 
+                        class="search-input" 
+                        placeholder="Search users by name or email..." 
+                        value="<%= search %>"
+                    >
+                </form>
+                <div class="action-buttons">
+                    <button type="submit" form="search-container" class="btn btn-primary" >
+                        <i class="fas fa-search"></i>
+                        Search
+                    </button>
+                    <% if (search) { %>
+                    <a href="/admin/requests" class="btn btn-secondary">
+                        <i class="fas fa-times"></i>
+                        Clear Search
+                    </a>
+                    <% } %>
+                    <button class="btn btn-secondary" onclick="refreshPage()">
+                        <i class="fas fa-sync-alt"></i>
+                        Refresh
+                    </button>
+                </div>
+            </div>
+
+           
+            <!-- Users Section -->
+            <div class="users-section">
+                <div class="section-header">
+                    <h2 class="section-title">Pending Requests</h2>
+                    <p class="section-subtitle">Review and manage user registration requests</p>
+                </div>
+
+                <div class="users-grid">
+                    <% if (users.length > 0) { %>
+                        <% users.forEach(function(user) { %>
+                        <div class="user-card" data-user-id="<%= user._id %>">
+                            <div class="user-header">
+                                <div class="user-info">
+                                    <div class="user-avatar">
+                                        <% if (user.picture) { %>
+                                            <img src="<%- user.picture %>" alt="Profile picture of <%- user.name %>" class="profile-img"
+                                            width="50" height="50">
+                                        <% } else { %>
+                                            <img src="/images/profile.png" alt="Default profile picture" class="profile-img" width="50"
+                                            height="50">
+                                        <% } %>
+                                    </div>
+                                    <div class="user-details">
+                                        <h3><%= user.name || 'Unknown User' %></h3>
+                                        <p><%= user.email || 'No email provided' %></p>
+                                    </div>
+                                </div>
+                                <div class="user-status">
+                                    <i class="fas fa-clock"></i>
+                                    Pending
+                                </div>
+                            </div>
+
+                            <div class="user-meta">
+                                <div class="meta-item">
+                                    <div class="meta-label">User ID</div>
+                                    <div class="meta-value"><%= user._id %></div>
+                                </div>
+                                <div class="meta-item">
+                                    <div class="meta-label">Request Date</div>
+                                    <div class="meta-value">
+                                        <%= user.createdAt ? new Date(user.createdAt).toLocaleDateString('en-US', { 
+                                            year: 'numeric', 
+                                            month: 'short', 
+                                            day: 'numeric',
+                                            hour: '2-digit',
+                                            minute: '2-digit'
+                                        }) : 'Unknown' %>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="user-actions">
+                                <button class="btn btn-success btn-sm" onclick="showModal('Are you sure you want to approve this request?','')">
+                                    <i class="fas fa-check"></i>
+                                    Approve
+                                </button>
+                                <button class="btn btn-danger btn-sm" onclick="showModal('Are you sure you want to reject this request?','HEllo')">
+                                    <i class="fas fa-times"></i>
+                                    Reject
+                                </button>
+                                <button class="btn btn-info btn-sm" onclick="viewUser('<%= user._id %>')">
+                                    <i class="fas fa-eye"></i>
+                                    View Details
+                                </button>
+                            </div>
+                        </div>
+                        <% }); %>
+                    <% } else { %>
+                        <div class="empty-state">
+                            <div class="empty-icon">
+                                <i class="fas fa-inbox"></i>
+                            </div>
+                            <h3 class="empty-title">No Requests Found</h3>
+                            <p class="empty-description">
+                                <% if (search) { %>
+                                    No requests match your search criteria. Try different keywords.
+                                <% } else { %>
+                                    There are currently no pending user requests to review.
+                                <% } %>
+                            </p>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            <% if (totalPages > 1) { %>
+            <div class="pagination-container">
+                <div class="pagination">
+                    <% if (page > 1) { %>
+                    <a href="?page=1<%= search ? '&search=' + encodeURIComponent(search) : '' %>" class="btn btn-secondary">
+                        <i class="fas fa-angle-double-left"></i>
+                    </a>
+                    <a href="?page=<%= page - 1 %><%= search ? '&search=' + encodeURIComponent(search) : '' %>" class="btn btn-secondary">
+                        <i class="fas fa-angle-left"></i>
+                    </a>
+                    <% } %>
+
+                    <% 
+                    let startPage = Math.max(1, page - 2);
+                    let endPage = Math.min(totalPages, page + 2);
+                    
+                    for (let i = startPage; i <= endPage; i++) { %>
+                        <a href="?page=<%= i %><%= search ? '&search=' + encodeURIComponent(search) : '' %>" 
+                           class="btn <%= i === page ? 'btn-primary active' : 'btn-secondary' %>">
+                            <%= i %>
+                        </a>
+                    <% } %>
+
+                    <% if (page < totalPages) { %>
+                    <a href="?page=<%= page + 1 %><%= search ? '&search=' + encodeURIComponent(search) : '' %>" class="btn btn-secondary">
+                        <i class="fas fa-angle-right"></i>
+                    </a>
+                    <a href="?page=<%= totalPages %><%= search ? '&search=' + encodeURIComponent(search) : '' %>" class="btn btn-secondary">
+                        <i class="fas fa-angle-double-right"></i>
+                    </a>
+                    <% } %>
+                </div>
+
+                <div class="pagination-info">
+                    Showing page <%= page %> of <%= totalPages %>
+                </div>
+            </div>
+            <% } %>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="modalOverlay" class="modal-overlay">
+        <div class="modal">
+            <button class="modal-close" onclick="closeModal()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+            
+            <div class="modal-header">
+                <div class="modal-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    </svg>
+                </div>
+                <h2 class="modal-title" id="modalTitle">Confirmation</h2>
+            </div>
+            
+            <div class="modal-content">
+                <p class="modal-message" id="modalMessage">Are you sure you want to continue?</p>
+            </div>
+            
+            <div class="modal-actions">
+                <button class="modal-btn modal-btn-cancel" onclick="handleResponse('no')">No</button>
+                <button class="modal-btn modal-btn-confirm" onclick="handleResponse('yes')">Yes</button>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Loading state management
+        function showLoading() {
+            document.body.classList.add('loading');
+        }
+
+        function viewUser(userId) {
+            window.location.href = `/admin/user/${userId}`;
+        }
+
+        function refreshPage() {
+            showLoading();
+            location.reload();
+        }
+
+        // Notification system
+        function showNotification(message, type = 'info') {
+            // Remove existing notifications
+            const existing = document.querySelector('.notification');
+            if (existing) existing.remove();
+
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 1rem 1.5rem;
+                border-radius: 8px;
+                color: white;
+                font-weight: 600;
+                z-index: 1000;
+                transform: translateX(100%);
+                transition: transform 0.3s ease;
+                max-width: 400px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            `;
+
+            // Set background color based on type
+            const colors = {
+                success: '#22c55e',
+                error: '#ef4444',
+                info: '#3b82f6'
+            };
+            notification.style.background = colors[type] || colors.info;
+
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            // Animate in
+            setTimeout(() => {
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+
+            // Auto remove after 3 seconds
+            setTimeout(() => {
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        // Enhanced search functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.querySelector('.search-input');
+            const form = document.querySelector('.controls-section form');
+            // Auto-focus search input
+            if (searchInput && !searchInput.value) {
+                searchInput.focus();
+            }
+
+            // Handle form submission
+            form.addEventListener('submit', function(e) {
+                console.log("Hello")
+                e.preventDefault();
+                const searchValue = searchInput.value.trim();
+                const url = new URL(window.location);
+                
+                if (searchValue) {
+                    url.searchParams.set('search', searchValue);
+                } else {
+                    url.searchParams.delete('search');
+                }
+                url.searchParams.delete('page'); // Reset to page 1 for new searches
+                
+                window.location.href = url.toString();
+            });
+
+            // Real-time search with debouncing
+            let searchTimeout;
+            searchInput.addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    const searchValue = this.value.trim();
+                    
+                    if (searchValue.length > 2) {
+                        // Show search suggestions or live results here if needed
+                        highlightSearchTerms(searchValue);
+                    }
+                }, 300);
+            });
+
+            // Keyboard shortcuts
+            document.addEventListener('keydown', function(e) {
+                // Ctrl/Cmd + K to focus search
+                if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                    e.preventDefault();
+                    searchInput.focus();
+                    searchInput.select();
+                }
+                
+                if (e.key === 'Escape' && document.activeElement === searchInput) {
+                    searchInput.value = '';
+                }
+            });
+        });
+
+        function highlightSearchTerms(searchTerm) {
+            const userCards = document.querySelectorAll('.user-card');
+            const regex = new RegExp(`(${searchTerm})`, 'gi');
+            
+            userCards.forEach(card => {
+                const nameEl = card.querySelector('.user-details h3');
+                const emailEl = card.querySelector('.user-details p');
+                
+                if (nameEl) {
+                    const originalName = nameEl.textContent;
+                    nameEl.innerHTML = originalName.replace(regex, '<mark style="background: var(--primary-green); color: white; padding: 2px 4px; border-radius: 3px;">$1</mark>');
+                }
+                
+                if (emailEl) {
+                    const originalEmail = emailEl.textContent;
+                    emailEl.innerHTML = originalEmail.replace(regex, '<mark style="background: var(--primary-green); color: white; padding: 2px 4px; border-radius: 3px;">$1</mark>');
+                }
+            });
+        }
+
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add smooth scrolling
+            document.documentElement.style.scrollBehavior = 'smooth';
+            
+            // Initialize tooltips or any other UI enhancements
+            initializeTooltips();
+            
+            // Check if there are search terms to highlight
+            const urlParams = new URLSearchParams(window.location.search);
+            const searchTerm = urlParams.get('search');
+            if (searchTerm) {
+                highlightSearchTerms(searchTerm);
+            }
+        });
+
+        function initializeTooltips() {
+            // Add tooltips to action buttons
+            const buttons = document.querySelectorAll('[data-tooltip]');
+            buttons.forEach(button => {
+                button.addEventListener('mouseenter');
+                button.addEventListener('mouseleave');
+            });
+        }
+    </script>
+    
+    <script>
+        let currentResolve = null;
+
+        function showModal(title, message) {
+            return new Promise((resolve) => {
+                currentResolve = resolve;
+                
+                document.getElementById('modalTitle').textContent = title;
+                document.getElementById('modalMessage').textContent = message;
+                document.getElementById('modalOverlay').classList.add('active');
+                
+                // Prevent body scroll
+                document.body.style.overflow = 'hidden';
+            });
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.remove('active');
+            document.body.style.overflow = '';
+            
+            if (currentResolve) {
+                currentResolve('cancelled');
+                currentResolve = null;
+            }
+        }
+
+        function handleResponse(response) {
+            closeModal();
+            
+            if (currentResolve) {
+                currentResolve(response);
+                currentResolve = null;
+            }
+            
+            // Show result
+            const resultDiv = document.getElementById('result');
+            resultDiv.textContent = `User selected: ${response}`;
+            resultDiv.style.display = 'block';
+            resultDiv.classList.add('show');
+            
+            setTimeout(() => {
+                resultDiv.classList.remove('show');
+            }, 100);
+        }
+
+        // Close modal on overlay click
+        document.getElementById('modalOverlay').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // Close modal on Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+    </script>
+
+</body>
+</html>

@@ -9,7 +9,13 @@ passport.use(
       callbackURL: 'http://localhost:1913/auth/google/callback',
     },
     (accessToken, refreshToken, profile, done) => {
-      return done(null, profile)
+      const user = {
+        id: profile.id,
+        name: profile.displayName,
+        email: profile.emails && profile.emails[0].value,
+        picture: profile.photos && profile.photos[0].value,
+      }
+      return done(null, user)
     }
   )
 )
