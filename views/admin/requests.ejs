@@ -10,6 +10,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         :root {
             --primary-green: #8cbf3a;
@@ -775,9 +776,9 @@
         
         /* Touch-friendly improvements */
         @media (hover: none) {
-        .profile-img:hover {
-            transform: none;
-        }
+            .profile-img:hover {
+                transform: none;
+            }
         }
 
         /* Modal Overlay */
@@ -792,7 +793,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 1000;
+            z-index: 100;
             opacity: 0;
             visibility: hidden;
             transition: all 0.3s ease;
@@ -804,7 +805,7 @@
         }
 
         /* Modal Container */
-        .modal {
+        .modal1 {
             background: var(--bg-card);
             border: 1px solid var(--border-dark);
             border-radius: 12px;
@@ -822,7 +823,7 @@
 
         /* Tablet responsiveness */
         @media (max-width: 768px) {
-            .modal {
+            .modal1 {
                 max-width: 500px;
                 width: 95%;
                 margin: 15px;
@@ -855,7 +856,7 @@
                 padding: 10px;
             }
 
-            .modal {
+            .modal1 {
                 width: calc(100% - 20px);
                 max-width: none;
                 margin: 10px;
@@ -912,11 +913,21 @@
                 right: 8px;
                 padding: 6px;
             }
+
+            /* Demo buttons responsive */
+            .demo-btn {
+                padding: 12px 20px;
+                font-size: 14px;
+                margin-bottom: 10px;
+                display: block;
+                width: 100%;
+                max-width: 250px;
+            }
         }
 
         /* Very small screens */
         @media (max-width: 320px) {
-            .modal {
+            .modal1 {
                 padding: 12px;
                 margin: 5px;
                 width: calc(100% - 10px);
@@ -946,7 +957,7 @@
 
         /* Landscape mobile orientation */
         @media (max-height: 500px) and (orientation: landscape) {
-            .modal {
+            .modal1 {
                 max-height: 95vh;
                 padding: 16px;
             }
@@ -970,7 +981,7 @@
             }
         }
 
-        .modal-overlay.active .modal {
+        .modal-overlay.active .modal1 {
             transform: scale(1) translateY(0);
         }
 
@@ -1084,17 +1095,6 @@
             to {
                 opacity: 1;
                 transform: scale(1) translateY(0);
-            }
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
             }
         }
 
@@ -1237,11 +1237,11 @@
                             </div>
 
                             <div class="user-actions">
-                                <button class="btn btn-success btn-sm" onclick="showModal('Are you sure you want to approve this request?','')">
+                                <button class="btn btn-success btn-sm" onclick="showModalCallback('Are You Sure?', 'Do you want to create a new device for this client?', handleSaveResult, '<%= user._id %>')">
                                     <i class="fas fa-check"></i>
                                     Approve
                                 </button>
-                                <button class="btn btn-danger btn-sm">
+                                <button class="btn btn-danger btn-sm" onclick="showModalCallback('Are You Sure?',  `Would you like to reject this client's request?`, rejectRequest, '<%= user._id %>')">
                                     <i class="fas fa-times"></i>
                                     Reject
                                 </button>
@@ -1314,7 +1314,7 @@
 
     <!-- Modal -->
     <div id="modalOverlay" class="modal-overlay">
-        <div class="modal">
+        <div class="modal1">
             <button class="modal-close" onclick="closeModal()">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -1338,12 +1338,11 @@
             </div>
             
             <div class="modal-actions">
-                <button class="modal-btn modal-btn-cancel" onclick="handleResponse('no')">No</button>
-                <button class="modal-btn modal-btn-confirm" onclick="handleResponse('yes')">Yes</button>
+                <button class="modal-btn modal-btn-cancel" id="noButton" onclick="handleResponse('no')">No</button>
+                <button class="modal-btn modal-btn-confirm" id="yesButton" onclick="handleResponse('yes')">Yes</button>
             </div>
         </div>
     </div>
-
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
@@ -1361,52 +1360,6 @@
             location.reload();
         }
 
-        // Notification system
-        function showNotification(message, type = 'info') {
-            // Remove existing notifications
-            const existing = document.querySelector('.notification');
-            if (existing) existing.remove();
-
-            const notification = document.createElement('div');
-            notification.className = `notification notification-${type}`;
-            notification.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                padding: 1rem 1.5rem;
-                border-radius: 8px;
-                color: white;
-                font-weight: 600;
-                z-index: 1000;
-                transform: translateX(100%);
-                transition: transform 0.3s ease;
-                max-width: 400px;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            `;
-
-            // Set background color based on type
-            const colors = {
-                success: '#22c55e',
-                error: '#ef4444',
-                info: '#3b82f6'
-            };
-            notification.style.background = colors[type] || colors.info;
-
-            notification.textContent = message;
-            document.body.appendChild(notification);
-
-            // Animate in
-            setTimeout(() => {
-                notification.style.transform = 'translateX(0)';
-            }, 100);
-
-            // Auto remove after 3 seconds
-            setTimeout(() => {
-                notification.style.transform = 'translateX(100%)';
-                setTimeout(() => notification.remove(), 300);
-            }, 3000);
-        }
-
         // Enhanced search functionality
         document.addEventListener('DOMContentLoaded', function() {
             const searchInput = document.querySelector('.search-input');
@@ -1418,7 +1371,6 @@
 
             // Handle form submission
             form.addEventListener('submit', function(e) {
-                console.log("Hello")
                 e.preventDefault();
                 const searchValue = searchInput.value.trim();
                 const url = new URL(window.location);
@@ -1510,37 +1462,89 @@
     </script>
     
     <script>
-        let currentResolve = null;
-
-        function showModal(title, message) {
-            return new Promise((resolve) => {
-                currentResolve = resolve;
-                
-                document.getElementById('modalTitle').textContent = title;
-                document.getElementById('modalMessage').textContent = message;
-                document.getElementById('modalOverlay').classList.add('active');
-                
-                // Prevent body scroll
-                document.body.style.overflow = 'hidden';
-            });
+        let currentCallback = null;
+        let userId = null
+        // Main function to show modal with callback
+        function showModalCallback(title, message, callback, user) {
+            currentCallback = callback;
+            userId = user
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalMessage').textContent = message;
+            document.getElementById('modalOverlay').classList.add('active');
+            
+            // Prevent body scroll
+            document.body.style.overflow = 'hidden';
         }
 
         function closeModal() {
+            userId = null
             document.getElementById('modalOverlay').classList.remove('active');
             document.body.style.overflow = '';
-            
-            if (currentResolve) {
-                currentResolve('cancelled');
-                currentResolve = null;
+            if (currentCallback) {
+                currentCallback('cancelled');
+                currentCallback = null;
             }
         }
 
         function handleResponse(response) {
-            closeModal();
-            
-            if (currentResolve) {
-                currentResolve(response);
-                currentResolve = null;
+            if (currentCallback) {
+                currentCallback(response);
+                currentCallback = null;
+            }
+        }
+
+        async function handleSaveResult(response) {
+            if (response === 'yes') {
+                const btn1 = document.getElementById("yesButton");
+                const btn2 = document.getElementById("noButton");
+                btn1.disabled = true;
+                btn2.disabled = true;
+                btn1.innerText = "Processing..."
+                btn1.style.cursor = "not-allowed";
+                btn2.style.cursor = "not-allowed";
+                btn1.style.opacity = "0.6";
+                btn2.style.opacity = "0.6";
+                try {
+                    let data = { _id : userId}
+                    const response = await fetch(`/create-device`,{
+                        method: "POST",
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    })
+                    const result = await response.json();
+                } catch (error) {
+                    await Swal.fire({
+                        icon: "error",
+                        title: "Something went wrong",
+                        text: "Please try again later."
+                    });
+                }
+                closeModal();
+            } else {
+                closeModal();
+            }
+        }
+
+        async function rejectRequest(response){
+            if(response=="yes"){
+                try {
+                    let data = { _id : userId}
+                    const response = await fetch(`/reject-request`,{
+                        method: "PUT",
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    })
+                    const result = await response.json();
+                } catch (error) {
+                    await Swal.fire({
+                        icon: "error",
+                        title: "Something went wrong",
+                        text: "Please try again later."
+                    });
+                }
+                closeModal();
+            } else {
+                closeModal();
             }
         }
 

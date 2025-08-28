@@ -12,7 +12,7 @@ const roomSchema = new mongoose.Schema(
       required: true,
     },
     pins: {
-        type: Array,
+      type: Array,
     }
   },
   {

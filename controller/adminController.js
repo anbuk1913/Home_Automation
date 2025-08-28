@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt')
 const userCollection = require("../model/userModel");
+const deviceCollection = require("../model/roomModel")
 
 
 async function encryptPassword(password) {
@@ -180,10 +181,29 @@ const requestsPage = async (req,res,next)=>{
     }
 }
 
+const addNewDevice = async (req,res,next)=>{
+    try {
+        // req.body  _id
+
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+const rejectRequest = async (req,res,next)=>{
+    try {
+        console.log(req.body)
+    } catch (error) {
+        console.log(error)
+    }
+}
+
 module.exports = { adminLogin,
     adminVerify,
     userList,
     editUser,
     addNewClient,
     requestsPage,
+    addNewDevice,
+    rejectRequest
 };

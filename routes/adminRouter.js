@@ -14,5 +14,7 @@ router.get("/admin/users", adminAuth, adminController.userList)
 router.put("/admin/edit/user", adminAuth, adminController.editUser)
 router.post("/addclient", adminAuth, adminController.addNewClient)
 router.get("/admin/requests", adminAuth, adminController.requestsPage)
+router.post("/create-device", adminAuth, adminController.addNewDevice)
+router.put("/reject-request", adminAuth, adminController.rejectRequest)
 
 module.exports = router
