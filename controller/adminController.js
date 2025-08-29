@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt')
-const userCollection = require("../model/userModel");
-const deviceCollection = require("../model/roomModel")
+const userCollection = require("../model/userModel")
+const pinCollection = require("../model/pinModel")
+const deviceCollection = require("../model/deviceModel")
 
 
 async function encryptPassword(password) {
@@ -127,12 +128,11 @@ const addNewClient = async (req, res, next) => {
         });
 
         const response = await newUser.save();
-        console.log(response)
 
         if (response && response._id) {
             return res.status(200).send({ ok: true })
         } else {
-            return res.status(500).send({
+            return res.status(200).send({
                 ok: false,
                 type: "error",
                 title: "Error",
@@ -144,66 +144,10 @@ const addNewClient = async (req, res, next) => {
     }
 }
 
-const requestsPage = async (req,res,next)=>{
-    try {
-        let page = parseInt(req.query.page) || 1;
-        let limit = 10;
-        let skip = (page - 1) * limit;
-
-        let searchQuery = req.query.search || "";
-        let regexPattern = new RegExp(searchQuery, "i");
-
-        let filter = { request: true };
-
-        if (searchQuery) {
-            filter.$or = [
-                { name: regexPattern },
-                { email: regexPattern }
-            ];
-        }
-
-        const users = await userCollection
-            .find(filter)
-            .skip(skip)
-            .limit(limit)
-            .sort({ createdAt: -1 });
-
-        const totalUsers = await userCollection.countDocuments({ request: true})
-        const totalPages = Math.ceil(totalUsers / limit);
-        return res.render("admin/requests", {
-            users,
-            page,
-            totalPages,
-            search: searchQuery,
-        })
-    } catch (error) {
-        console.log(error)
-    }
-}
-
-const addNewDevice = async (req,res,next)=>{
-    try {
-        // req.body  _id
-
-    } catch (error) {
-        console.log(error)
-    }
-}
-
-const rejectRequest = async (req,res,next)=>{
-    try {
-        console.log(req.body)
-    } catch (error) {
-        console.log(error)
-    }
-}
 
 module.exports = { adminLogin,
     adminVerify,
     userList,
     editUser,
-    addNewClient,
-    requestsPage,
-    addNewDevice,
-    rejectRequest
+    addNewClient
 };

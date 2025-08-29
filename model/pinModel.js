@@ -17,7 +17,7 @@ const pinSchema = new mongoose.Schema(
     },
     roomId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'room'
+      ref: 'device'
     }
   },
   {

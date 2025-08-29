@@ -3,6 +3,7 @@ const bodyParser = require('body-parser')
 const passport = require('../config/passport')
 const userAuth = require('../middleware/userAuth')
 const userController = require('../controller/userController')
+const deviceController = require('../controller/deviceController')
 
 const router = express.Router()
 
@@ -19,8 +20,12 @@ router.get("/otp", userController.otpPage)
 router.post('/otp', userController.otpPost)
 router.get('/auth/google',passport.authenticate('google', { scope: ['email', 'profile'] }))
 router.get('/auth/google/callback',passport.authenticate('google', {failureRedirect: 'http://localhost:1913/login',}),userController.googleCallback)
-router.get('/devices', userAuth, userController.devicePage)
-router.put("/request-board", userAuth, userController.requestBoard)
+router.get('/devices', userAuth, deviceController.devicePage)
+router.put("/request-board", userAuth, deviceController.requestBoard)
+router.get('/devices/:roomid', userAuth, deviceController.roomPage)
+router.post('/pins/:pinId/toggle', userAuth, deviceController.togglePin)
+router.put('/rooms/:roomId/edit', userAuth, deviceController.editRoom)
+router.put('/pins/:pinId/edit', userAuth, deviceController.editPin)
 router.post("/logout", userController.logout)
 
 module.exports = router

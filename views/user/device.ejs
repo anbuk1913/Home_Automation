@@ -932,7 +932,7 @@
             <% if (typeof rooms !== 'undefined' && rooms.length > 0) { %>
                 <% rooms.forEach(function(room) { %>
                     <div class="room-card" onclick="showRoomDetail('<%= room._id %>', '<%= room.name %>')">
-                        <i class="<%= getRoomIcon(room.name) %> room-icon"></i>
+                        <i class="getRoomIcon(<%= room.name %>)  room-icon"></i>
                         <div class="room-info">
                             <h3><%= room.name %></h3>
                             <p>Smart room with connected devices</p>
@@ -1039,15 +1039,7 @@
         }
 
         function showRoomDetail(roomId, roomName) {
-            document.getElementById('dashboard-view').style.display = 'none';
-            document.getElementById('room-detail-view').style.display = 'block';
-            
-            // Update room header
-            document.getElementById('room-detail-icon').className = getRoomIcon(roomName) + ' room-icon';
-            document.getElementById('room-detail-name').textContent = roomName;
-            
-            // Load pins for this room
-            loadRoomPins(roomId);
+            window.location.href = `/devices/${roomId}`
         }
 
         function showDashboard() {

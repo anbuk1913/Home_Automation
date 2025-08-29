@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt')
-const pinCollection = require('../model/pinModel')
+const pinCollections = require('../model/pinModel')
 const userCollection = require('../model/userModel')
+const roomsCollection =require('../model/deviceModel')
 const sendotp = require('../helper/sendOtp')
 const otpCollection = require('../model/otpModel')
 
@@ -181,31 +182,7 @@ const otpPost = async(req,res,next)=>{
     }
 }
 
-const devicePage = async(req,res,next)=>{
-    try {
-        const user = await userCollection.findOne({ _id:req.session.userId })
-        return res.render('user/device',{user})
-    } catch (error) {
-        console.log(error)
-    }
-}
 
-const requestBoard = async(req,res,next)=>{
-    try {
-        const updatedUser = await userCollection.findOneAndUpdate(
-            { _id: req.session.userId },
-            { $set: { request: true } },
-            { returnDocument: 'after' }
-        )
-        if(updatedUser){
-            return res.status(200).send({ success: true })
-        } else {
-            return res.status(200).send({ success: false })
-        }
-    } catch (error) {
-        console.log(error)
-    }
-}
 
 const logout = async(req,res,next)=>{
     try {
@@ -227,7 +204,5 @@ module.exports = {
     sendOtp,
     otpPage,
     otpPost,
-    devicePage,
-    requestBoard,
     logout
 }
