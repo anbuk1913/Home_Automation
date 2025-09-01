@@ -23,6 +23,7 @@ const homePage = async(req,res,next)=>{
         if(req.session.login){
             const client = await userCollection.findById({ _id : req.session.userId })
             let user = { name : client.name, picture : client.picture}
+            console.log(client.picture)
             return res.render("user/home",{ user })
         }
         return res.render("user/home",{ user })
