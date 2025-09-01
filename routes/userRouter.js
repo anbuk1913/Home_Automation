@@ -26,6 +26,7 @@ router.get('/devices/:roomid', userAuth, deviceController.roomPage)
 router.post('/pins/:pinId/toggle', userAuth, deviceController.togglePin)
 router.put('/rooms/:roomId/edit', userAuth, deviceController.editRoom)
 router.put('/pins/:pinId/edit', userAuth, deviceController.editPin)
+router.post('/getdata/:userid/:roomid', userController.getdata)
 router.post("/logout", userController.logout)
 
 module.exports = router

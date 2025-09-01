@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt')
 const pinCollections = require('../model/pinModel')
 const userCollection = require('../model/userModel')
-const roomsCollection =require('../model/deviceModel')
+const deviceCollection =require('../model/deviceModel')
 const sendotp = require('../helper/sendOtp')
 const otpCollection = require('../model/otpModel')
 
@@ -183,6 +183,28 @@ const otpPost = async(req,res,next)=>{
 }
 
 
+const getdata = async(req,res,next)=>{
+    try {
+        const { userid, roomid } = req.params
+        const user = await userCollection.findById({ _id:userid })
+        if(user){
+            const room =  await deviceCollection.findById({ _id: roomid}).populate('pins')
+            if(String(user._id) == String(room.userId)){
+                return res.status(200).json({ success: true, room })
+            } else {
+                return res.status(409).json({ success: false, message: "Unauthorized request!"})
+            }
+        } else {
+            return res.status(403).json({
+                success : false,
+                message : "User Not Found"
+            })
+        }
+    } catch (error) {
+        console.log(error)
+    }
+}
+
 
 const logout = async(req,res,next)=>{
     try {
@@ -204,5 +226,6 @@ module.exports = {
     sendOtp,
     otpPage,
     otpPost,
+    getdata,
     logout
 }

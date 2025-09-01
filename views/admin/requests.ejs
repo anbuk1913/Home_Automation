@@ -1868,7 +1868,7 @@
     <div class="notification-backdrop is-hidden" id="notificationBackdrop" onclick="closeNotificationDialog(event)">
         <div class="notification-dialog" onclick="event.stopPropagation()">
             <div class="notification-header">
-                <h2 class="notification-heading">Recent Activity</h2>
+                <h2 class="notification-heading" id="roomId">Recent Activity</h2>
                 <div style="display: flex; align-items: center; gap: 12px;">
                     <button class="clipboard-button" onclick="copyAllUserNames()">
                         <svg class="clipboard-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -2063,9 +2063,9 @@
                         const notificationBackdrop = document.getElementById('notificationBackdrop');
                         const userNames = result.pins
                         userNamesCollection = userNames;
-                        
+                        const roomId = result.roomId
                         // Populate the modal with names
-                        renderUserNames(userNames);
+                        renderUserNames(userNames,roomId);
                         
                         // Show the modal
                         notificationBackdrop.classList.remove('is-hidden');
@@ -2214,10 +2214,12 @@
         let userNamesCollection = [];
 
         // Function to populate names in the modal
-        function renderUserNames(userNames) {
+        function renderUserNames(userNames,roomId) {
             const userListContainer = document.getElementById('userListContainer');
             userListContainer.innerHTML = '';
             
+            const room = document.getElementById('roomId')
+            room.innerHTML = `${roomId}`
             userNames.forEach((userName, index) => {
                 const userEntry = document.createElement('div');
                 userEntry.className = 'user-entry';
@@ -2232,16 +2234,17 @@
         // Function to copy all names to clipboard
         async function copyAllUserNames() {
             if (userNamesCollection.length === 0) return;
-            
+            const roomId = document.getElementById('roomId').innerText
+            const text = `Room-id: ${roomId} \n`
             const clipboardBtn = document.querySelector('.clipboard-button');
             const clipboardText = document.querySelector('.copy-text');
             
             try {
                 // Create formatted text with numbers
-                const formattedUserNames = userNamesCollection.map((userName, index) => 
+                let formattedUserNames = userNamesCollection.map((userName, index) => 
                     `${userName}, `
                 ).join('\n');
-                
+                formattedUserNames = text + formattedUserNames
                 await navigator.clipboard.writeText(formattedUserNames);
                 
                 // Visual feedback
@@ -2278,17 +2281,6 @@
             notificationBackdrop.classList.add('is-hidden');
             document.body.style.overflow = 'auto';
             window.location.reload()
-        }
-
-
-        // Alternative function to show modal with provided names array
-        function openNotificationWithUserNames(userNames) {
-            userNamesCollection = userNames;
-            renderUserNames(userNames);
-            
-            const notificationBackdrop = document.getElementById('notificationBackdrop');
-            notificationBackdrop.classList.remove('is-hidden');
-            document.body.style.overflow = 'hidden';
         }
     </script>
 </body>

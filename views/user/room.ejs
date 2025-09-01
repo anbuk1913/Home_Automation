@@ -1004,12 +1004,7 @@
 
         // Keyboard shortcuts
         document.addEventListener('keydown', function(e) {
-            // Press 'R' to refresh
-            if (e.key.toLowerCase() === 'r' && !e.ctrlKey && !e.metaKey) {
-                e.preventDefault();
-                location.reload();
-            }
-            
+                
             // Press numbers 1-9 to toggle pins
             // const num = parseInt(e.key);
             // if (num >= 1 && num <= 9) {

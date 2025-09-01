@@ -115,7 +115,9 @@ const addNewDevice = async (req,res,next)=>{
                         pins: pinId,
                         type: 'success',
                         title: "Success",
-                        message: `Successfully ${insertedPins} pins Created.` })
+                        message: `Successfully ${insertedPins} pins Created.`,
+                        roomId: response._id
+                    })
                 } else {
                     return res.status(409).send({ 
                         ok: false,
@@ -123,6 +125,7 @@ const addNewDevice = async (req,res,next)=>{
                         type: 'info',
                         title: "OOPS!",
                         message: `Cannot Create Pins in Database`,
+                        roomId: response._id
                     })
                 }
             } else {
@@ -130,7 +133,8 @@ const addNewDevice = async (req,res,next)=>{
                     ok: false,
                     type: 'warning',
                     title: "OOPS!",
-                    message: `Cannot Connect Pins in Database`
+                    message: `Cannot Connect Pins in Database`,
+                    roomId: response._id
                 })
             }
         } else {

@@ -45,28 +45,48 @@ const userList = async (req, res, next) => {
         let page = parseInt(req.query.page) || 1;
         let limit = 10;
         let skip = (page - 1) * limit;
+
         let searchQuery = req.query.search || "";
         let regexPattern = new RegExp(searchQuery, "i");
-        let filter = searchQuery
-            ? { $or: [{ name: regexPattern }, { email: regexPattern }] }
-            : {};
-        const users = await userCollection
-            .find(filter)
-            .skip(skip)
-            .limit(limit)
-            .sort({ createdAt: -1 });
-        const totalUsers = await userCollection.countDocuments();
-        const totalPages = Math.ceil(totalUsers / limit);
-        return res.render("admin/userList", {
+
+        let filter = searchQuery ? { $or: [{ name: regexPattern }, { email: regexPattern }] }: {}
+        const users = await userCollection.aggregate([
+        { $match: filter },
+        {
+            $lookup: {
+            from: "devices",
+            localField: "_id",
+            foreignField: "userId",
+            as: "devices",
+            },
+        },
+        {
+            $addFields: {
+            deviceCount: { $size: "$devices" },
+            },
+        },
+        {
+            $project: {
+            devices: 0,
+            },
+        },
+        { $sort: { createdAt: -1 } },
+        { $skip: skip },
+        { $limit: limit },])
+
+    const totalUsers = await userCollection.countDocuments(filter);
+    const totalPages = Math.ceil(totalUsers / limit);
+
+    return res.render("admin/userList", {
             users,
             page,
             totalPages,
             search: searchQuery,
-        });
+        })
     } catch (error) {
         console.log(error)
     }
-};
+}
 
 const editUser = async (req, res, next) => {
     try {
@@ -144,10 +164,26 @@ const addNewClient = async (req, res, next) => {
     }
 }
 
+const singleUserView = async(req,res,next)=>{
+    try {
+        const {userid} = req.params
+        const user = await userCollection.findById({ _id:userid })
+        if(user){
+            const rooms = await deviceCollection.find({ userId:userid }).populate('pins')
+            return res.render('admin/singleUser',{ user, rooms })
+        } else {
+            return res.redirect("/admin/users")
+        }
+    } catch (error) {
+        console.log(error)
+    }
+}
+
 
 module.exports = { adminLogin,
     adminVerify,
     userList,
     editUser,
-    addNewClient
+    addNewClient,
+    singleUserView
 };

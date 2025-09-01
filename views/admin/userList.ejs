@@ -1012,14 +1012,14 @@
                 <th scope="col"><i class="fas fa-phone me-1"></i>Phone</th>
                 <th scope="col"><i class="fas fa-clock me-1"></i>Request</th>
                 <th scope="col"><i class="fas fa-toggle-on me-1"></i>Status</th>
-                <th scope="col"><i class="fas fa-calendar me-1"></i>Created</th>
+                <th scope="col"><i class="fas fa-server"></i> Devices</th>
                 <th scope="col"><i class="fas fa-cog me-1"></i>Actions</th>
               </tr>
             </thead>
             <tbody>
               <% users.forEach(function(user) { %>
                 <tr class="table-row">
-                  <td>
+                  <td onclick="userViewPage('<%= user._id %>')">
                     <% if (user.picture) { %>
                       <img src="<%- user.picture %>" alt="Profile picture of <%- user.name %>" class="profile-img"
                         width="45" height="45">
@@ -1028,13 +1028,13 @@
                           height="45">
                     <% } %>
                   </td>
-                  <td>
+                  <td onclick="userViewPage('<%= user._id %>')">
                     <div class="user-name"><%- user.name || 'Unnamed User' %></div>
                   </td>
-                  <td>
+                  <td onclick="userViewPage('<%= user._id %>')">
                     <div class="user-email"><%- user.email || 'N/A' %></div>
                   </td>
-                  <td><%- user.phone || 'N/A' %></td>
+                  <td onclick="userViewPage('<%= user._id %>')"><%- user.phone || 'N/A' %></td>
                   <td>
                     <% if (user.request) { %>
                       <span class="status-badge status-pending">
@@ -1057,8 +1057,8 @@
                         </span>
                         <% } %>
                   </td>
-                  <td>
-                    <%= user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A' %>
+                  <td onclick="userViewPage('<%= user._id %>')">
+                    <b><%= user.deviceCount ? user.deviceCount : 0 %></b>
                   </td>
                   <td>
                     <button class="action-btn edit-user" data-id="<%= user._id %>" data-name="<%= user.name %>"
@@ -1078,7 +1078,7 @@
       <div class="mobile-cards">
         <% users.forEach(function(user) { %>
           <div class="user-card">
-            <div class="user-card-header">
+            <div class="user-card-header" onclick="userViewPage('<%= user._id %>')">
               <% if (user.picture) { %>
                 <img src="<%- user.picture %>" alt="Profile picture of <%- user.name %>" class="profile-img" width="60"
                   height="60">
@@ -1092,21 +1092,21 @@
                     </div>
             </div>
 
-            <div class="user-card-body">
+            <div class="user-card-body" onclick="userViewPage('<%= user._id %>')">
               <div>
                 <div class="info-label">Phone</div>
                 <div class="info-value"><%- user.phone || 'N/A' %></div>
               </div>
               <div>
-                <div class="info-label">Created</div>
+                <div class="info-label">Devices</div>
                 <div class="info-value">
-                  <%= user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A' %>
+                  <b><%= user.deviceCount ? user.deviceCount : 0 %></b>
                 </div>
               </div>
             </div>
 
             <div class="user-card-footer">
-              <div class="d-flex gap-2 flex-wrap">
+              <div class="d-flex gap-2 flex-wrap" onclick="userViewPage('<%= user._id %>')">
                 <% if (user.request) { %>
                   <span class="status-badge status-pending">
                     <i class="fas fa-hourglass-half"></i>Pending
@@ -1760,6 +1760,10 @@
           });
         }
       });
+
+      function userViewPage(id){
+        window.location.href = `/admin/user/${id}`
+      }
     </script>
 </body>
 </html>
