@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt')
 const userCollection = require("../model/userModel")
 const pinCollection = require("../model/pinModel")
 const deviceCollection = require("../model/deviceModel")
+const AppError = require('../middleware/errorHandling')
 
 
 async function encryptPassword(password) {
@@ -20,6 +21,7 @@ const adminLogin = async (req, res, next) => {
         }
     } catch (error) {
         console.log(error)
+        next(new AppError('Sorry...Something went wrong', 500))
     }
 };
 
@@ -37,6 +39,7 @@ const adminVerify = async (req, res, next) => {
         }
     } catch (error) {
         console.log(error)
+        next(new AppError('Sorry...Something went wrong', 500))
     }
 };
 
@@ -85,6 +88,7 @@ const userList = async (req, res, next) => {
         })
     } catch (error) {
         console.log(error)
+        next(new AppError('Sorry...Something went wrong', 500))
     }
 }
 
@@ -121,6 +125,7 @@ const editUser = async (req, res, next) => {
         }
     } catch (error) {
         console.log(error)
+        next(new AppError('Sorry...Something went wrong', 500))
     }
 }
 
@@ -161,6 +166,7 @@ const addNewClient = async (req, res, next) => {
         }
     } catch (error) {
         console.log(error)
+        next(new AppError('Sorry...Something went wrong', 500))
     }
 }
 
@@ -176,6 +182,7 @@ const singleUserView = async(req,res,next)=>{
         }
     } catch (error) {
         console.log(error)
+        next(new AppError('Sorry...Something went wrong', 500))
     }
 }
 

@@ -1,6 +1,7 @@
 const pinCollection = require('../model/pinModel')
 const userCollection = require('../model/userModel')
 const deviceCollection =require('../model/deviceModel')
+const AppError = require('../middleware/errorHandling')
 
 
 const devicePage = async (req,res,next)=>{
@@ -10,6 +11,7 @@ const devicePage = async (req,res,next)=>{
         return res.render('user/device',{ user, rooms })
     } catch (error) {
         console.log(error)
+        next(new AppError('Sorry...Something went wrong', 500))
     }
 }
 
@@ -25,6 +27,7 @@ const roomPage = async (req,res,next)=>{
         }
     } catch (error) {
         console.log(error)
+        next(new AppError('Sorry...Something went wrong', 500))
     }
 }
 
@@ -42,6 +45,7 @@ const requestBoard = async (req,res,next)=>{
         }
     } catch (error) {
         console.log(error)
+        next(new AppError('Sorry...Something went wrong', 500))
     }
 }
 
@@ -79,6 +83,7 @@ const requestsPage = async (req,res,next)=>{
         })
     } catch (error) {
         console.log(error)
+        next(new AppError('Sorry...Something went wrong', 500))
     }
 }
 
@@ -147,6 +152,7 @@ const addNewDevice = async (req,res,next)=>{
         }
     } catch (error) {
         console.log(error)
+        next(new AppError('Sorry...Something went wrong', 500))
     }
 }
 
@@ -160,6 +166,7 @@ const rejectRequest = async (req,res,next)=>{
         }
     } catch (error) {
         console.log(error)
+        next(new AppError('Sorry...Something went wrong', 500))
     }
 }
 
@@ -187,6 +194,7 @@ const togglePin = async (req,res,next)=>{
         })
     } catch (error) {
         console.log(error)
+        next(new AppError('Sorry...Something went wrong', 500))
     }
 }
 
@@ -207,6 +215,7 @@ const editRoom = async (req,res,next)=>{
         res.json({ success: true, message: 'Room updated successfully' })
     } catch (error) {
         console.log(error)
+        next(new AppError('Sorry...Something went wrong', 500))
     }
 }
 
@@ -224,6 +233,7 @@ const editPin = async (req,res,next)=>{
         res.json({ success: true, pinName: name })
     } catch (error) {
         console.log(error)
+        next(new AppError('Sorry...Something went wrong', 500))
     }
 }
 

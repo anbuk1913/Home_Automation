@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error <%= errorCode %> - <%= getErrorTitle(errorCode) %></title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-green: #8cbf3a;
+            --secondary-gray: #374151;
+            --bg-dark: #1a1a1a;
+            --bg-card: #262626;
+            --bg-darker: #0f0f0f;
+            --light-green: #a5d155;
+            --dark-green: #75a832;
+            --light-gray: #9ca3af;
+            --dark-gray: #1f2937;
+            --border-dark: #404040;
+            --text-light: #e5e7eb;
+            --text-gray: #9ca3af;
+            --text-dark: #374151;
+            --shadow-green: rgba(140, 191, 58, 0.15);
+            --shadow-medium: rgba(140, 191, 58, 0.25);
+            --shadow-heavy: rgba(0, 0, 0, 0.3);
+            --hover-bg: #333333;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-light);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .error-container {
+            background: var(--bg-card);
+            border: 1px solid var(--border-dark);
+            border-radius: 24px;
+            padding: 60px 40px;
+            text-align: center;
+            box-shadow: 0 25px 80px var(--shadow-heavy);
+            max-width: 500px;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .error-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-color, --primary-green), var(--accent-light, --light-green));
+        }
+
+        .error-container::after {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, var(--accent-color, --primary-green), transparent, var(--accent-color, --primary-green));
+            border-radius: 24px;
+            z-index: -1;
+            opacity: 0.1;
+        }
+
+        .error-icon {
+            width: 50px;
+            height: 50px;
+            margin: 0 auto 20px;
+            background: var(--icon-bg, var(--bg-darker));
+            border: 2px solid var(--icon-border, var(--border-dark));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--icon-color, var(--primary-green));
+            font-size: 48px;
+            position: relative;
+            box-shadow: 0 8px 32px var(--shadow-color, var(--shadow-green));
+        }
+
+        .error-icon::before {
+            content: '';
+            position: absolute;
+            inset: -10px;
+            background: conic-gradient(from 0deg, var(--icon-color, var(--primary-green)), transparent, var(--icon-color, var(--primary-green)));
+            border-radius: 50%;
+            z-index: -1;
+            opacity: 0.2;
+            animation: rotate 8s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .error-code {
+            font-size: clamp(3rem, 8vw, 5rem);
+            font-weight: 800;
+            color: var(--accent-color, var(--primary-green));
+            margin-bottom: 10px;
+            line-height: 1;
+            text-shadow: 0 4px 16px var(--shadow-color, var(--shadow-green));
+            background: linear-gradient(135deg, var(--accent-color, var(--primary-green)), var(--accent-light, var(--light-green)));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .error-title {
+            font-size: clamp(1.5rem, 4vw, 2.2rem);
+            font-weight: 700;
+            color: var(--text-light);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .error-message {
+            font-size: clamp(1rem, 2.5vw, 1.3rem);
+            color: var(--accent-color, var(--primary-green));
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .error-description {
+            font-size: clamp(0.95rem, 2vw, 1.1rem);
+            color: var(--text-gray);
+            margin-bottom: 15px;
+            line-height: 1.7;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .error-actions {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 0px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 16px 28px;
+            border: none;
+            border-radius: 16px;
+            font-size: clamp(0.9rem, 2vw, 1.1rem);
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            min-width: 140px;
+            justify-content: center;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-green), var(--light-green));
+            color: var(--bg-darker);
+            border: 2px solid var(--primary-green);
+            box-shadow: 0 8px 32px var(--shadow-green);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, var(--light-green), var(--primary-green));
+            transform: translateY(-4px);
+            box-shadow: 0 12px 48px var(--shadow-medium);
+        }
+
+        .btn-secondary {
+            background: var(--bg-darker);
+            color: var(--text-light);
+            border: 2px solid var(--border-dark);
+            box-shadow: 0 8px 32px var(--shadow-heavy);
+        }
+
+        .btn-secondary:hover {
+            background: var(--hover-bg);
+            border-color: var(--primary-green);
+            color: var(--primary-green);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 48px var(--shadow-green);
+        }
+
+        .btn:active {
+            transform: translateY(-2px);
+        }
+
+        .error-details {
+            margin-top: 20px;
+            padding: 24px;
+            background: var(--bg-darker);
+            border: 1px solid var(--border-dark);
+            border-radius: 16px;
+            border-left: 4px solid var(--accent-color, var(--primary-green));
+            text-align: left;
+        }
+
+        .error-details h4 {
+            color: var(--text-light);
+            margin-bottom: 12px;
+            font-size: clamp(0.9rem, 2vw, 1rem);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .error-details p {
+            color: var(--text-gray);
+            font-size: clamp(0.8rem, 1.8vw, 0.9rem);
+            font-family: 'SF Mono', 'Monaco', 'Cascadia Code', 'Consolas', monospace;
+            word-break: break-all;
+            line-height: 1.5;
+            background: var(--bg-card);
+            padding: 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border-dark);
+        }
+
+        .floating-particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .particle {
+            position: absolute;
+            background: var(--primary-green);
+            border-radius: 50%;
+            opacity: 0.1;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .particle:nth-child(1) { width: 4px; height: 4px; left: 10%; animation-delay: -2s; }
+        .particle:nth-child(2) { width: 6px; height: 6px; left: 20%; animation-delay: -4s; }
+        .particle:nth-child(3) { width: 3px; height: 3px; left: 70%; animation-delay: -1s; }
+        .particle:nth-child(4) { width: 5px; height: 5px; left: 80%; animation-delay: -3s; }
+        .particle:nth-child(5) { width: 4px; height: 4px; left: 90%; animation-delay: -5s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.1; }
+            90% { opacity: 0.1; }
+            50% { transform: translateY(-10vh) rotate(180deg); }
+        }
+
+        /* Color schemes based on error type */
+        .client-error {
+            --accent-color: #f59e0b;
+            --accent-light: #fbbf24;
+            --icon-color: #f59e0b;
+            --icon-bg: #1f1611;
+            --icon-border: #451a03;
+            --shadow-color: rgba(245, 158, 11, 0.15);
+        }
+
+        .server-error {
+            --accent-color: #ef4444;
+            --accent-light: #f87171;
+            --icon-color: #ef4444;
+            --icon-bg: #1f1113;
+            --icon-border: #450a0a;
+            --shadow-color: rgba(239, 68, 68, 0.15);
+        }
+
+        .auth-error {
+            --accent-color: #8b5cf6;
+            --accent-light: #a78bfa;
+            --icon-color: #8b5cf6;
+            --icon-bg: #1e1828;
+            --icon-border: #4c1d95;
+            --shadow-color: rgba(139, 92, 246, 0.15);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+            
+            .error-container {
+                padding: 40px 25px;
+                border-radius: 20px;
+                max-width: 100%;
+            }
+            
+            .error-icon {
+                width: 80px;
+                height: 80px;
+                margin-bottom: 30px;
+                font-size: 36px;
+            }
+            
+            .error-actions {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .btn {
+                padding: 14px 24px;
+                min-width: auto;
+                width: 100%;
+            }
+            
+            .error-details {
+                padding: 20px;
+                margin-top: 30px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .error-container {
+                padding: 30px 20px;
+                border-radius: 16px;
+            }
+            
+            .error-icon {
+                width: 70px;
+                height: 70px;
+                font-size: 30px;
+                margin-bottom: 25px;
+            }
+            
+            .error-description {
+                margin-bottom: 35px;
+            }
+            
+            .btn {
+                padding: 12px 20px;
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (min-width: 1200px) {
+            .error-container {
+                padding: 80px 60px;
+            }
+            
+            .error-icon {
+                width: 120px;
+                height: 120px;
+                font-size: 56px;
+                margin-bottom: 50px;
+            }
+        }
+
+        /* Dark mode enhancements */
+        @media (prefers-reduced-motion: reduce) {
+            .error-icon::before,
+            .particle {
+                animation: none;
+            }
+        }
+
+        /* High contrast mode support */
+        @media (prefers-contrast: high) {
+            .error-container {
+                border: 2px solid var(--text-light);
+            }
+            
+            .btn {
+                border-width: 3px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <%
+        // Helper function to get error title
+        function getErrorTitle(code) {
+            const titles = {
+                400: "Bad Request",
+                401: "Unauthorized", 
+                403: "Forbidden",
+                404: "Page Not Found",
+                408: "Request Timeout",
+                429: "Too Many Requests",
+                500: "Internal Server Error",
+                502: "Bad Gateway", 
+                503: "Service Unavailable",
+                504: "Gateway Timeout"
+            };
+            return titles[code] || `Error ${code}`;
+        }
+
+        // Helper function to get error description
+        function getErrorDescription(code) {
+            const descriptions = {
+                400: "The request could not be understood by the server due to malformed syntax.",
+                401: "Authentication is required to access this resource. Please log in and try again.",
+                403: "You don't have the necessary permissions to access this resource.", 
+                404: "The page you're looking for doesn't exist or has been moved to a different location.",
+                408: "The server timed out waiting for the request. Please try again later.",
+                429: "Too many requests have been sent in a given amount of time. Please wait before trying again.",
+                500: "Something went wrong on our end. Our team has been notified and is working to fix it.",
+                502: "The server received an invalid response from an upstream server. Please try again later.",
+                503: "The service is temporarily unavailable due to maintenance or overload. Please try again later.",
+                504: "The server took too long to respond. Please check your connection and try again."
+            };
+            return descriptions[code] || "An unexpected error occurred. Please try again or contact support if the problem persists.";
+        }
+
+        // Helper function to get error icon
+        function getErrorIcon(code) {
+            if (code === 401 || code === 403) return "🔐";
+            if (code === 404) return "🔍";
+            if (code === 408 || code === 504) return "⏱️";
+            if (code === 429) return "🚦";
+            if (code === 502 || code === 503) return "🔧";
+            if (code >= 500) return "⚠️";
+            if (code >= 400) return "❌";
+            return "💫";
+        }
+
+        // Helper function to get CSS class for styling
+        function getErrorClass(code) {
+            if (code === 401 || code === 403) return "auth-error";
+            if (code >= 400 && code < 500) return "client-error";
+            if (code >= 500) return "server-error";
+            return "";
+        }
+    %>
+
+    <div class="error-container <%= getErrorClass(errorCode) %>">
+        <div class="floating-particles">
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+        </div>
+
+        <div class="error-icon">
+            <%= getErrorIcon(errorCode) %>
+        </div>
+        
+        <div class="error-code"><%= errorCode %></div>
+        <h1 class="error-title"><%= getErrorTitle(errorCode) %></h1>
+        
+        <% if (errorMessage && errorMessage !== getErrorTitle(errorCode)) { %>
+            <p class="error-message"><%= errorMessage %></p>
+        <% } %>
+        
+        <p class="error-description">
+            <%= getErrorDescription(errorCode) %>
+        </p>
+
+        <div class="error-actions">
+            <a href="/" class="btn btn-primary">
+                🏠 Home
+            </a>
+            <button onclick="history.back()" class="btn btn-secondary">
+                ← Back
+            </button>
+            <button onclick="location.reload()" class="btn btn-secondary">
+                🔄 Retry
+            </button>
+        </div>
+
+        <% if (typeof errorDetails !== 'undefined' && errorDetails) { %>
+            <div class="error-details">
+                <h4>Technical Details</h4>
+                <p><%= errorDetails %></p>
+            </div>
+        <% } %>
+    </div>
+
+    <script>
+        // Enhanced interactivity
+        document.querySelectorAll('.btn').forEach(btn => {
+            btn.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-4px) scale(1.02)';
+            });
+            
+            btn.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+
+            btn.addEventListener('mousedown', function() {
+                this.style.transform = 'translateY(-2px) scale(0.98)';
+            });
+
+            btn.addEventListener('mouseup', function() {
+                this.style.transform = 'translateY(-4px) scale(1.02)';
+            });
+        });
+
+        // Add subtle animation on page load
+        window.addEventListener('load', () => {
+            const container = document.querySelector('.error-container');
+            container.style.opacity = '0';
+            container.style.transform = 'translateY(20px)';
+            container.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            
+            setTimeout(() => {
+                container.style.opacity = '1';
+                container.style.transform = 'translateY(0)';
+            }, 100);
+        });
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') history.back();
+            if (e.key === 'Enter' || e.key === ' ') {
+                const homeBtn = document.querySelector('.btn-primary');
+                if (homeBtn) homeBtn.click();
+            }
+            if (e.key === 'r' || e.key === 'R') location.reload();
+        });
+    </script>
+</body>
+</html>

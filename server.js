@@ -37,6 +37,16 @@ app.use(
 app.use(userRouter)
 app.use(adminRouter)
 
+app.use((err, req, res, next) => {
+  const errorCode = err.statusCode || 500
+  const errorMessage = err.message || 'Internal Server Error'
+  res.status(errorCode).render('user/error', { errorCode, errorMessage })
+})
+
+app.use((req, res) => {
+  res.status(404).render('user/error',{ errorCode : 404, errorMessage: "Page Not Found!" })
+})
+
 app.listen(process.env.PORT,() => {
     console.log("Server created")
 })

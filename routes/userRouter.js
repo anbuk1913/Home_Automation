@@ -27,6 +27,11 @@ router.post('/pins/:pinId/toggle', userAuth, deviceController.togglePin)
 router.put('/rooms/:roomId/edit', userAuth, deviceController.editRoom)
 router.put('/pins/:pinId/edit', userAuth, deviceController.editPin)
 router.post('/getdata/:userid/:roomid', userController.getdata)
+router.get('/forget-password', userController.fogetPasswordPage)
+router.post('/forgot-pass', userController.emailCheck)
+router.get('/forget-password-opt', userController.forgototpPage)
+router.post('/forget-password-otp', userController.forgetOtpPost)
+router.get('/forgototpsend', userController.forgetPassOtpSend)
 router.post("/logout", userController.logout)
 
 module.exports = router
