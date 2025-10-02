@@ -186,11 +186,22 @@ const singleUserView = async(req,res,next)=>{
     }
 }
 
+const adminLogout = async(req,res,next)=>{
+    try {
+        req.session.adminVer = false
+        return res.redirect("/admin")
+    } catch (error) {
+        console.log(error)
+        next(new AppError('Sorry...Something went wrong', 500))
+    }
+}
+
 
 module.exports = { adminLogin,
     adminVerify,
     userList,
     editUser,
     addNewClient,
-    singleUserView
+    singleUserView,
+    adminLogout
 };

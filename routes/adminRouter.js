@@ -18,5 +18,6 @@ router.get("/admin/requests", adminAuth, deviceCollection.requestsPage)
 router.post("/create-device", adminAuth, deviceCollection.addNewDevice)
 router.put("/reject-request", adminAuth, deviceCollection.rejectRequest)
 router.get('/admin/user/:userid', adminAuth, adminController.singleUserView)
+router.post('/adminlogout', adminController.adminLogout)
 
 module.exports = router

@@ -1656,9 +1656,13 @@
 
         <ul class="navbar-nav">
           <li class="nav-item">
-            <a class="nav-link logout-btn" href="/logout" id="logoutLink">
-              <i class="fas fa-sign-out-alt me-2"></i>Logout
-            </a>
+            <form action="/adminlogout" method="POST">
+                <div class="nav-link logout-btn">
+                <button style="background-color: transparent; border-radius: 0px; border: transparent;" type="submit">
+                    <i class="fas fa-sign-out-alt me-2"></i><b>Logout</b>  
+                </button>
+                </div>
+            </form>
           </li>
         </ul>
       </div>
