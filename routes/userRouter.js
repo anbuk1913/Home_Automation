@@ -4,6 +4,7 @@ const passport = require('../config/passport')
 const userAuth = require('../middleware/userAuth')
 const userController = require('../controller/userController')
 const deviceController = require('../controller/deviceController')
+const failureRedirectURL = process.env.failureRedirectURL
 
 const router = express.Router()
 
@@ -19,7 +20,7 @@ router.get("/otpsend", userController.sendOtp)
 router.get("/otp", userController.otpPage)
 router.post('/otp', userController.otpPost)
 router.get('/auth/google',passport.authenticate('google', { scope: ['email', 'profile'] }))
-router.get('/auth/google/callback',passport.authenticate('google', {failureRedirect: 'http://localhost:1913/login',}),userController.googleCallback)
+router.get('/auth/google/callback',passport.authenticate('google', {failureRedirect: failureRedirectURL,}),userController.googleCallback)
 router.get('/devices', userAuth, deviceController.devicePage)
 router.put("/request-board", userAuth, deviceController.requestBoard)
 router.get('/devices/:roomid', userAuth, deviceController.roomPage)
